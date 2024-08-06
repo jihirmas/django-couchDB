@@ -37,6 +37,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'djangocouchapp'
 ]
 
 MIDDLEWARE = [
@@ -73,6 +74,7 @@ WSGI_APPLICATION = 'djangocouch.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/5.0/ref/settings/#databases
 
+
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
@@ -80,6 +82,9 @@ DATABASES = {
     }
 }
 
+
+# Couch DB Config
+COUCHDB_SERVER = 'http://127.0.0.1:5984'
 
 # Password validation
 # https://docs.djangoproject.com/en/5.0/ref/settings/#auth-password-validators
@@ -121,3 +126,12 @@ STATIC_URL = 'static/'
 # https://docs.djangoproject.com/en/5.0/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+database_name = 'grupo10'
+
+from cloudant.client import CouchDB
+client = CouchDB("admin", "admin", url='http://127.0.0.1:5984', connect=True)
+if database_name in client:
+    MY_DATABASE = client[database_name]
+else:
+    MY_DATABASE = client.create_database('grupo10')

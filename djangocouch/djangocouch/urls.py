@@ -16,7 +16,16 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path
+from djangocouchapp import views
 
 urlpatterns = [
     path('admin/', admin.site.urls),
+    path('create-document', views.add_document),
+    # path('edit-document', views.edit_document),
+    # path('delete-docuemnt', views.delete_document),
+    path('get-document/<str:id>/', views.get_document)
+    
 ]
+
+
+
