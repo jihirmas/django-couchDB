@@ -9,11 +9,10 @@
 <body>
     <div class="container mt-5">
         <h1>Sales Management</h1>
-        <a href="/create-sale/" class="btn btn-primary mb-3">Create Sale</a>
-        <table class="table">
+        <a href="{% url 'create_sale' %}" class="btn btn-primary mb-3">Create Sale</a>
+        <table class="table table-striped">
             <thead>
                 <tr>
-                    <th>Name</th>
                     <th>Book</th>
                     <th>Year</th>
                     <th>Sales</th>
@@ -21,19 +20,19 @@
                 </tr>
             </thead>
             <tbody>
-                {% for row in sales.rows %}
+                {% for sale in sales %}
                     <tr>
-                        <td>{{ row.doc.name }}</td>
-                        <td>{{ row.doc.book.name }}</td>
-                        <td>{{ row.doc.year }}</td>
-                        <td>{{ row.doc.sales }}</td>
+                        <td>{{ sale.book_name }}</td>
+                        <td>{{ sale.year }}</td>
+                        <td>{{ sale.sales }}</td>
                         <td>
-                            <a href="/{{ row.id }}/edit/" class="btn btn-warning btn-sm">Edit</a>
-                            <form action="/{{ row.id }}/delete/" method="post" style="display:inline;">
-                                {% csrf_token %}
-                                <button type="submit" class="btn btn-danger btn-sm">Delete</button>
-                            </form>
+                            <a href="/edit-sale/{{ sale.id }}/" class="btn btn-warning btn-sm">Edit</a>
                         </td>
+                        
+                    </tr>
+                {% empty %}
+                    <tr>
+                        <td colspan="4" class="text-center">No sales available</td>
                     </tr>
                 {% endfor %}
             </tbody>
