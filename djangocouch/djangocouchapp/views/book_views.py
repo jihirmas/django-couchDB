@@ -12,7 +12,6 @@ def create_book(request):
         author_id = request.POST.get('author')
         date_of_publication = request.POST.get('date_of_publication')
         summary = request.POST.get('summary')
-        number_of_sales = request.POST.get('number_of_sales')
 
         # Create and save a new book
         data = {
@@ -21,7 +20,6 @@ def create_book(request):
             "author": author_id,
             "date_of_publication": date_of_publication,
             "summary": summary,
-            "number_of_sales": number_of_sales,
             "type": "book"
         }
         my_database.create_document(data)
@@ -60,12 +58,11 @@ def edit_book(request, book_id):
         author_id = request.POST.get('author')
         date_of_publication = request.POST.get('date_of_publication')
         summary = request.POST.get('summary')
-        number_of_sales = request.POST.get('number_of_sales')
         
         book['name'] = name
         book['author'] = author_id
         book['date_of_publication'] = date_of_publication
-        book['number_of_sales'] = number_of_sales
+        book['summary'] = summary
         my_database[book_id] = book  
         book.save()
         
