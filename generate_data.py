@@ -1,6 +1,7 @@
 from faker import Faker
 import uuid
 from djangocouch.djangocouch.settings import MY_DATABASE
+import random
 
 fake = Faker()
 
@@ -21,9 +22,62 @@ def create_authors(num_authors):
         MY_DATABASE.create_document(data)
     return authors
 
-# Por ejemplo, crear 10 autores
-authors = create_authors(10)
 
-# Imprimir los autores generados (solo para verificación)
+def create_book(author_id):
+    name = fake.sentence(nb_words=3)
+    date_of_publication = fake.date()
+    summary = fake.text()
+
+    data = {
+        "_id": str(uuid.uuid4()),
+        "name": name,
+        "author": author_id,
+        "date_of_publication": date_of_publication,
+        "summary": summary,
+        "type": "book"
+    }
+    MY_DATABASE.create_document(data)
+    return data
+
+def create_review(book_id):
+    review = fake.text()
+    score = random.randint(1, 5)
+    up_votes = random.randint(0, 10000)
+    
+    data = {
+        "_id": str(uuid.uuid4()),
+        "book": book_id,
+        "review": review,
+        "score": score,
+        "up_votes": up_votes
+    }
+    
+    MY_DATABASE.create_document(data)
+    return data
+
+
+def create_sales(year_inicial, year_final, book):
+    for year in range(year_inicial, year_final+1):
+        data = {
+            "book_id": book,
+            "year": year,
+            "sales": random.randint(1000, 100000)
+        }
+        MY_DATABASE.create_document(data)
+
+# Por ejemplo, crear 10 autores
+authors = create_authors(50)
 for author in authors:
-    print(author)
+    for _ in range(6):
+        book = create_book(author_id=author["_id"])
+        n_reviews = random.randint(1,11)
+        for _ in range(n_reviews):
+            create_review(book["_id"])
+        for year in range(random.randint(5,20)):
+            year_final = 2024
+            year_inicial = 2024 - year
+            create_sales(year_inicial, year_final, book["_id"])
+            
+
+
+
