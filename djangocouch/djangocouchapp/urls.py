@@ -22,7 +22,8 @@ book_urls = [
 sales_urls = [
     path("create-sale/", sales_views.create_sale, name="create_sale"),
     path("edit-sale/<str:sale_id>/", sales_views.edit_sale, name="edit_sale"),
-    path("list-sales/", sales_views.list_sales, name="list_sales")
+    path("list-sales/", sales_views.list_sales, name="list_sales"),
+    path('sale/<str:sale_id>/delete/', sales_views.delete_sale, name='delete_sale'),
 ]
 
 urlpatterns = [

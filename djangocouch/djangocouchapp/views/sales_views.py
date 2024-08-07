@@ -61,26 +61,25 @@ def create_sale(request):
     return render(request, 'sales/create.html', {'books': books})
 
 
+def delete_sale(request, sale_id):
+    sale = my_database[sale_id]
+    sale.delete()
+    return redirect('/list-sales/')
+
+
 def edit_sale(request, sale_id):
     sale = my_database[sale_id]
     if request.method == "POST":
-        book_id = request.POST.get('book_id')
         sales = request.POST.get('sales')
         year = request.POST.get('year')
 
-        sale['book'] = book_id
         sale['sales'] = sales
         sale["year"] = year
         my_database[sale_id] = sale  
         sale.save()
         
-        return redirect('/sales_management/')
+        return redirect('/list-sales/')
 
-    books = [
-        {'id': doc['id'], 'name': doc['doc']['name']} 
-        for doc in my_database.all_docs(include_docs=True)['rows'] 
-        if 'doc' in doc and doc['doc'].get('type') == 'book'
-    ]
-    return render(request, 'sales/edit.html', {'books': books, "sale": sale})
+    return render(request, 'sales/edit.html', {"sale": sale})
 
 

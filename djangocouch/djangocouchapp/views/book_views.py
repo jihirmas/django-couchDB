@@ -78,4 +78,4 @@ def edit_book(request, book_id):
 def delete_book(request, book_id):
     book = my_database[book_id]
     book.delete()
-    return redirect('list_books')
+    return redirect('/list_books/')
