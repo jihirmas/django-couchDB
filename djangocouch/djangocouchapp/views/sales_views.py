@@ -4,13 +4,34 @@ import uuid
 
 my_database = settings.MY_DATABASE
 
-
 def list_sales(request):
-    sales = [
-        {'id': doc['id'], 'name': doc['doc']['name']} 
-        for doc in my_database.all_docs(include_docs=True)['rows'] 
-        if 'doc' in doc and doc['doc'].get('type') == 'sales'
-    ]
+    sales = []
+    for doc in my_database.all_docs(include_docs=True)['rows']:
+        if 'doc' in doc and doc['doc'].get('type') == 'sale':
+            sale_id = doc['id']
+            book_id = doc['doc']['book']
+            print(f"Attempting to fetch book with ID: {book_id}")  # Debugging line
+            
+            try:
+                book_doc = my_database[book_id]
+                print(book_doc)
+
+                if book_doc:
+                    book_name = book_doc.get('name', 'Unknown Book')
+                    print(f"Fetched book: {book_doc}")  # Debugging line
+                else:
+                    book_name = 'Unknown Book'
+                    print(f"No document found for book ID: {book_id}")  # Debugging line
+            except Exception as e:
+                book_name = 'Unknown Book'
+                print(f"Error fetching book document for ID {book_id}: {e}")  # Debugging line
+            
+            sales.append({
+                'id': sale_id,
+                'book_name': book_name,
+                'year': doc['doc'].get('year', 'Unknown Year'),
+                'sales': doc['doc'].get('sales', 'Unknown Sales')
+            })
     return render(request, 'sales/management.html', {'sales': sales})
 
 
@@ -30,7 +51,7 @@ def create_sale(request):
         my_database.create_document(data)
 
         
-        return redirect('/sales_management/')
+        return redirect('/list-sales/')
 
     books = [
         {'id': doc['id'], 'name': doc['doc']['name']} 
