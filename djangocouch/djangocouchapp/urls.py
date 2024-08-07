@@ -1,12 +1,11 @@
 from django.urls import path
-from djangocouchapp.views import author_views, book_views, sales_views
+from djangocouchapp.views import author_views, book_views, sales_views, tables_views
 
 author_urls = [
     path("create-author/", author_views.create_author, name='create_author'),
-    path("", author_views.author_management, name='author_management'),
+    path("list-authors/", author_views.author_management, name='author_management'),
     path("<str:author_id>/edit/", author_views.edit_author, name='edit_author'),
     path("<str:author_id>/delete/", author_views.delete_author, name='delete_author'),
-    path("list-authors/", author_views.list_authors, name='list_authors'),
 ]
 
 book_urls = [
@@ -26,8 +25,13 @@ sales_urls = [
     path('sale/<str:sale_id>/delete/', sales_views.delete_sale, name='delete_sale'),
 ]
 
+tables_urls = [
+    path('top-50-books/',tables_views.top_50_books_view, name='top_50_books')
+]
+
 urlpatterns = [
     *author_urls,
     *book_urls,
     *sales_urls,
+    *tables_urls,
 ]
