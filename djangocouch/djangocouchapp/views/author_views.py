@@ -12,12 +12,16 @@ def create_author(request):
     if request.method == "POST":
         name = request.POST.get('name')
         birth_date = request.POST.get('birth_date')
+        country_of_origin = request.POST.get('country_of_origin')
+        description= request.POST.get('description')
 
         # Create and save a new author
         data = {
             "_id": str(uuid.uuid4()),
             "name": name,
-            "birth_date": birth_date
+            "birth_date": birth_date,
+            "country_of_origin": country_of_origin,
+            "description": description
         }
         my_database.create_document(data)
 
@@ -38,10 +42,14 @@ def edit_author(request, author_id):
     if request.method == "POST":
         name = request.POST.get('name')
         birth_date = request.POST.get('birth_date')
+        country_of_origin = request.POST.get('country_of_origin')
+        description = request.POST.get('description')
         print(f"Received name: {name}, birth_date: {birth_date}")
         
         author['name'] = name
         author['birth_date'] = birth_date
+        author['country_of_origin'] = country_of_origin
+        author['description'] = description
         my_database[author_id] = author  
         author.save() #ojo que acá se guarda el documento no la bd para que funcione
         print(my_database[author_id])
