@@ -8,9 +8,11 @@
     <h1>Book Details</h1>
     <p><strong>Title:</strong> {{ book.name }}</p>
     <p><strong>Author:</strong> {{ author.name }}</p>
-    <p><strong>Birth Date:</strong> {{ author.birth_date }}</p>
-    <p><strong>Country of Origin:</strong> {{ author.country_of_origin }}</p>
-    <p><strong>Description:</strong> {{ author.description }}</p>
+    <p><strong>Summary:</strong> {{ book.summary }}</p>
+    <p><strong>Date of Publication:</strong> {{ book.date_of_publication }}</p>
+    <p><strong>Sales:</strong> {{ book.number_of_sales}}</p>
     <a href="{% url 'book_management' %}">Back to Book Management</a>
 </body>
 </html>
+
+

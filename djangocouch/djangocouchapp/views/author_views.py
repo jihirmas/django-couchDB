@@ -5,7 +5,15 @@ import uuid
 my_database = settings.MY_DATABASE
 
 def author_management(request):
-    authors = my_database.all_docs(include_docs=True)
+    authors = [
+        {
+            'id': doc['id'], 
+            'name': doc['doc']['name'], 
+            'birth_date': doc['doc'].get('birth_date', '')
+        } 
+        for doc in my_database.all_docs(include_docs=True)['rows'] 
+        if 'doc' in doc and doc['doc'].get('type') == 'author'
+    ]
     return render(request, 'author/management.html', {'authors': authors})
 
 def create_author(request):

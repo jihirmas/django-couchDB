@@ -18,13 +18,13 @@
                 </tr>
             </thead>
             <tbody>
-                {% for row in authors.rows %}
+                {% for author in authors %}
                     <tr>
-                        <td>{{ row.doc.name }}</td>
-                        <td>{{ row.doc.birth_date }}</td>
+                        <td>{{ author.name }}</td>
+                        <td>{{ author.birth_date }}</td>
                         <td>
-                            <a href="/{{ row.id }}/edit/" class="btn btn-warning btn-sm">Edit</a>
-                            <form action="/{{ row.id }}/delete/" method="post" style="display:inline;">
+                            <a href="/{{ author.id }}/edit/" class="btn btn-warning btn-sm">Edit</a>
+                            <form action="/{{ author.id }}/delete/" method="post" style="display:inline;">
                                 {% csrf_token %}
                                 <button type="submit" class="btn btn-danger btn-sm">Delete</button>
                             </form>

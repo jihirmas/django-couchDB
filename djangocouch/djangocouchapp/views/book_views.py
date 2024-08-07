@@ -27,8 +27,8 @@ def create_book(request):
         my_database.create_document(data)
 
         # Redirect to the book management page
-        return redirect('/')
-
+        return redirect('/book-management/')
+ 
     authors = [
         {'id': doc['id'], 'name': doc['doc']['name']} 
         for doc in my_database.all_docs(include_docs=True)['rows'] 
@@ -48,6 +48,8 @@ def list_books(request):
         for doc in my_database.all_docs(include_docs=True)['rows'] 
         if 'doc' in doc and doc['doc'].get('type') == 'book'
     ]
+
+    print(f"books {books}")
     return render(request, 'book/management.html', {'books': books})
 
 
@@ -56,9 +58,14 @@ def edit_book(request, book_id):
     if request.method == "POST":
         name = request.POST.get('name')
         author_id = request.POST.get('author')
+        date_of_publication = request.POST.get('date_of_publication')
+        summary = request.POST.get('summary')
+        number_of_sales = request.POST.get('number_of_sales')
         
         book['name'] = name
         book['author'] = author_id
+        book['date_of_publication'] = date_of_publication
+        book['number_of_sales'] = number_of_sales
         my_database[book_id] = book  
         book.save()
         
@@ -74,4 +81,4 @@ def edit_book(request, book_id):
 def delete_book(request, book_id):
     book = my_database[book_id]
     book.delete()
-    return redirect('book_management')
+    return redirect('list_books')
