@@ -15,17 +15,16 @@ def create_author(request):
         country_of_origin = request.POST.get('country_of_origin')
         description= request.POST.get('description')
 
-        # Create and save a new author
         data = {
             "_id": str(uuid.uuid4()),
             "name": name,
             "birth_date": birth_date,
             "country_of_origin": country_of_origin,
-            "description": description
+            "description": description,
+            "type": "author"
         }
         my_database.create_document(data)
 
-        # Redirect to the author management page
         return redirect('author_management')
     return render(request, 'author/create.html')
 
@@ -33,9 +32,6 @@ def list_authors(request):
     authors = my_database.all_docs(include_docs=True)
     return render(request, 'author/list.html', {'authors': authors})
 
-def view_author(request, author_id):
-    author = my_database[author_id]
-    return render(request, 'author/view.html', {'author': author})
 
 def edit_author(request, author_id):
     author = my_database[author_id]

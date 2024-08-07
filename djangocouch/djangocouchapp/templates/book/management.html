@@ -1,0 +1,16 @@
+<!-- book/management.html -->
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Book Management</title>
+</head>
+<body>
+    <h1>Book Management</h1>
+    <ul>
+        {% for book in books %}
+            <li>{{ book.name }} by {{ book.author }}</li>
+        {% endfor %}
+    </ul>
+    <a href="{% url 'create_book' %}">Create a new book</a>
+</body>
+</html>
