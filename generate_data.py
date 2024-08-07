@@ -13,7 +13,8 @@ def create_authors(num_authors):
             "name": fake.name(),
             "birth_date": fake.date_of_birth(minimum_age=18, maximum_age=90).isoformat(),
             "country_of_origin": fake.country(),
-            "description": fake.text(max_nb_chars=200)
+            "description": fake.text(max_nb_chars=200),
+            "type": "author"
         }
         authors.append(data)
         # Aquí es donde se llamaría a my_database.create_document(data)

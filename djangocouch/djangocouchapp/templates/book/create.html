@@ -1,25 +1,42 @@
-<!-- book/create.html -->
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
+    <meta charset="UTF-8">
     <title>Create Book</title>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" rel="stylesheet">
 </head>
 <body>
-    <h1>Create a New Book</h1>
-    <form method="POST">
-        {% csrf_token %}
-        <label for="name">Book Name:</label>
-        <input type="text" id="name" name="name" required>
-        <br>
-        <label for="author">Author:</label>
-        <select id="author" name="author" required>
-            <option value="">Select an author</option>
-            {% for author in authors %}
-                <option value="{{ author.id }}">{{ author.name }}</option>
-            {% endfor %}
-        </select>
-        <br>
-        <input type="submit" value="Create Book">
-    </form>
+    <div class="container mt-5">
+        <h1>Create a New Book</h1>
+        <form method="POST">
+            {% csrf_token %}
+            <div class="form-group">
+                <label for="name">Book Name</label>
+                <input type="text" class="form-control" id="name" name="name" required>
+            </div>
+            <div class="form-group">
+                <label for="author">Author</label>
+                <select class="form-control" id="author" name="author" required>
+                    <option value="">Select an author</option>
+                    {% for author in authors %}
+                        <option value="{{ author.id }}">{{ author.name }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="summary">Summary</label>
+                <textarea class="form-control" id="summary" name="summary" rows="3" required></textarea>
+            </div>
+            <div class="form-group">
+                <label for="date_of_publication">Date of Publication</label>
+                <input type="date" class="form-control" id="date_of_publication" name="date_of_publication" required>
+            </div>
+            <div class="form-group">
+                <label for="number_of_sales">Number of Sales</label>
+                <input type="number" class="form-control" id="number_of_sales" name="number_of_sales" required>
+            </div>
+            <button type="submit" class="btn btn-primary">Create Book</button>
+        </form>
+    </div>
 </body>
 </html>

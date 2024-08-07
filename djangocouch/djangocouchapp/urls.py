@@ -11,7 +11,8 @@ author_urls = [
 
 book_urls = [
     path("create-book/", book_views.create_book, name='create_book'),
-    path("<str:book_id>/", book_views.view_book, name='view_book'),
+    path("view-book/<str:book_id>/", book_views.view_book, name='view_book'),
+    path('list-books/', book_views.list_books, name="list_books")
 ]
 
 urlpatterns = [

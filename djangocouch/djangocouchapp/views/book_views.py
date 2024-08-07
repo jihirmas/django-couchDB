@@ -10,12 +10,18 @@ def create_book(request):
     if request.method == "POST":
         name = request.POST.get('name')
         author_id = request.POST.get('author')
+        date_of_publication = request.POST.get('date_of_publication')
+        summary = request.POST.get('summary')
+        number_of_sales = request.POST.get('number_of_sales')
 
         # Create and save a new book
         data = {
             "_id": str(uuid.uuid4()),
             "name": name,
             "author": author_id,
+            "date_of_publication": date_of_publication,
+            "summary": summary,
+            "number_of_sales": number_of_sales,
             "type": "book"
         }
         my_database.create_document(data)
@@ -35,6 +41,15 @@ def view_book(request, book_id):
     book = my_database[book_id]
     author = my_database[book['author']]
     return render(request, 'book/view.html', {'book': book, 'author': author})
+
+def list_books(request):
+    books = [
+        {'id': doc['id'], 'name': doc['doc']['name']} 
+        for doc in my_database.all_docs(include_docs=True)['rows'] 
+        if 'doc' in doc and doc['doc'].get('type') == 'book'
+    ]
+    return render(request, 'book/management.html', {'books': books})
+
 
 def edit_book(request, book_id):
     book = my_database[book_id]
