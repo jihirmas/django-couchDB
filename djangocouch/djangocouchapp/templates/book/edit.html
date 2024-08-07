@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edit Book</title>
+</head>
+<body>
+    <h1>Edit Book</h1>
+    <form method="post">
+        {% csrf_token %}
+        <label for="name">Name:</label>
+        <input type="text" id="name" name="name" value="{{ book.name }}" required><br><br>
+
+        <label for="author">Author:</label>
+        <select id="author" name="author" required>
+            {% for author in authors %}
+                <option value="{{ author.id }}" {% if author.id == book.author %}selected{% endif %}>
+                    {{ author.name }}
+                </option>
+            {% endfor %}
+        </select><br><br>
+
+        <label for="date_of_publication">Date of Publication:</label>
+        <input type="date" id="date_of_publication" name="date_of_publication" value="{{ book.date_of_publication }}" required><br><br>
+
+        <label for="summary">Summary:</label>
+        <textarea id="summary" name="summary" required>{{ book.summary }}</textarea><br><br>
+
+        <label for="number_of_sales">Number of Sales:</label>
+        <input type="number" id="number_of_sales" name="number_of_sales" value="{{ book.number_of_sales }}" required><br><br>
+
+        <input type="submit" value="Update Book">
+    </form>
+
+    <a href="{% url 'list_books' %}">Back to Book List</a>
+</body>
+</html>
