@@ -130,8 +130,10 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 database_name = 'grupo10'
 
 from cloudant.client import CouchDB
-client = CouchDB("admin", "admin", url='http://127.0.0.1:5984', connect=True)
+client = CouchDB("admin", "adminadmin", url='http://127.0.0.1:5984', connect=True)
 if database_name in client:
     MY_DATABASE = client[database_name]
 else:
     MY_DATABASE = client.create_database('grupo10')
+
+APPEND_SLASH = False

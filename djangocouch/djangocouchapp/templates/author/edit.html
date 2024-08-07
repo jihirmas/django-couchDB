@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Edit Author</title>
+</head>
+<body>
+    <h1>Edit Author</h1>
+    <form method="post">
+        {% csrf_token %}
+        <label for="name">Name:</label>
+        <input type="text" id="name" name="name" value="{{ author.name }}"><br>
+        <label for="birth_date">Birth Date:</label>
+        <input type="date" id="birth_date" name="birth_date" value="{{ author.birth_date }}"><br>
+        <button type="submit">Save</button>
+    </form>
+</body>
+</html>

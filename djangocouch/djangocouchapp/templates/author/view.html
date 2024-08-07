@@ -1,0 +1,7 @@
+<h1>Author Management</h1>
+<ul>
+    {% for row in authors.rows %}
+        <li><a href="{% url 'view_author' row.doc._id %}">{{ row.doc.name }}</a></li>
+    {% endfor %}
+</ul>
+<a href="{% url 'create_author' %}">Create Author</a>
