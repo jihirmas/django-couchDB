@@ -6,6 +6,7 @@ author_urls = [
     path("list-authors/", author_views.author_management, name='author_management'),
     path("<str:author_id>/edit/", author_views.edit_author, name='edit_author'),
     path("<str:author_id>/delete/", author_views.delete_author, name='delete_author'),
+    path("", author_views.author_management, name='author_management'),
 ]
 
 book_urls = [

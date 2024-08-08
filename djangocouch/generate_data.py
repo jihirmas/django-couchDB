@@ -78,7 +78,7 @@ def create_sales(year_inicial, year_final, book):
         MY_DATABASE.create_document(data)
 
 # Por ejemplo, crear 10 autores
-authors = create_authors(5)
+authors = create_authors(50)
 for i, author in enumerate(authors):
     for n in range(6):
         book = create_book(author_id=author["_id"])
