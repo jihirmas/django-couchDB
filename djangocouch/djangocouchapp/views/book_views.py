@@ -47,7 +47,6 @@ def list_books(request):
         if 'doc' in doc and doc['doc'].get('type') == 'book'
     ]
 
-    print(f"books {books}")
     return render(request, 'book/management.html', {'books': books})
 
 

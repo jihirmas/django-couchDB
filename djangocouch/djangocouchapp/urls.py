@@ -26,7 +26,8 @@ sales_urls = [
 ]
 
 tables_urls = [
-    path('top-50-books/',tables_views.top_50_books_view, name='top_50_books')
+    path('top-50-books/',tables_views.top_50_books_view, name='top_50_books'),
+    path('search_books/', tables_views.search_view, name="search_books")
 ]
 
 urlpatterns = [

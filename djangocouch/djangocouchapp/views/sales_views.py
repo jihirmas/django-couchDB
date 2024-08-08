@@ -10,21 +10,21 @@ def list_sales(request):
         if 'doc' in doc and doc['doc'].get('type') == 'sale':
             sale_id = doc['id']
             book_id = doc['doc']['book']
-            print(f"Attempting to fetch book with ID: {book_id}")  # Debugging line
+            # print(f"Attempting to fetch book with ID: {book_id}")  # Debugging line
             
             try:
                 book_doc = my_database[book_id]
-                print(book_doc)
+                # print(book_doc)
 
                 if book_doc:
                     book_name = book_doc.get('name', 'Unknown Book')
-                    print(f"Fetched book: {book_doc}")  # Debugging line
+                    # print(f"Fetched book: {book_doc}")  # Debugging line
                 else:
                     book_name = 'Unknown Book'
-                    print(f"No document found for book ID: {book_id}")  # Debugging line
+                    # print(f"No document found for book ID: {book_id}")  # Debugging line
             except Exception as e:
                 book_name = 'Unknown Book'
-                print(f"Error fetching book document for ID {book_id}: {e}")  # Debugging line
+                # print(f"Error fetching book document for ID {book_id}: {e}")  # Debugging line
             
             sales.append({
                 'id': sale_id,

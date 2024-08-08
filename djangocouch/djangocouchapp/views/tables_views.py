@@ -53,3 +53,37 @@ def get_top_50_books():
 def top_50_books_view(request):
     top_books = get_top_50_books()
     return render(request, 'table/top_50.html', {'top_books': top_books})
+
+
+def search_view(request):
+    search_param = request.POST.get("search_param")
+    books = []
+
+    all_docs = my_database.all_docs(include_docs=True)['rows']
+
+    for doc in all_docs:
+        if doc['doc'].get('type') == 'book':
+            book = doc['doc']
+            book_id = book['_id']
+            book_name = book['name']
+            book_summary = book["summary"]
+            author_id = book['author']
+            year = book['date_of_publication'][:4]
+            
+
+            
+            books.append({
+                'id': book_id,
+                'name': book_name,
+                'author_id': author_id,
+                'year': year,
+                'book_summary' : book_summary
+            })
+    final_books = []
+    for book in books:
+        if search_param in book['book_summary']:
+            final_books.append(book)
+    
+    return render(request, 'table/search.html', {'books': final_books})
+
+    
