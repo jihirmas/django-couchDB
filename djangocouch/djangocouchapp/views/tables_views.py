@@ -16,9 +16,16 @@ def get_top_50_books():
             book_name = book['name']
             author_id = book['author']
             year = book['date_of_publication'][:4]
-            sales = int(book['number_of_sales'])
             
-            # Aggregate total sales for the author
+            # Inicializar ventas del libro en 0
+            sales = 0
+
+            # Buscar documentos de tipo "sale" para calcular las ventas del libro
+            for sale_doc in all_docs:
+                if sale_doc['doc'].get('type') == 'sale' and sale_doc['doc'].get('book') == book_id:
+                    sales += int(sale_doc['doc'].get('sales'))
+
+            # Agregar ventas al autor
             if author_id in authors_sales:
                 authors_sales[author_id] += sales
             else:
@@ -32,6 +39,7 @@ def get_top_50_books():
                 'sales': sales,
             })
     
+    # Ordenar libros por ventas y obtener los 50 más vendidos
     top_books = sorted(books, key=lambda x: x['sales'], reverse=True)[:50]
 
     for book in top_books:
