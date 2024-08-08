@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+{% include "navbar.html" %}
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Create Sale</title>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+    <div class="container mt-5">
+        <h1>Create Sale</h1>
+        <form action="http://127.0.0.1:8000/create-sale/" method="post">
+            {% csrf_token %}
+            <div class="form-group">
+                <label for="book_id">Book</label>
+                <select class="form-control" id="book_id" name="book_id" required>
+                    <option value="">Select a book</option>
+                    {% for book in books %}
+                        <option value="{{ book.id }}">{{ book.name }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="year">Year</label>
+                <input type="number" class="form-control" id="year" name="year" required>
+            </div>
+            <div class="form-group">
+                <label for="sales">Sales</label>
+                <input type="number" class="form-control" id="sales" name="sales" required>
+            </div>
+            <button type="submit" class="btn btn-primary">Create Sale</button>
+        </form>
+    </div>
+</body>
+</html>

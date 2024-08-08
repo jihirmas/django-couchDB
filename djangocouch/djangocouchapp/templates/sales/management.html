@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+{% include "navbar.html" %}
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Sales Management</title>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+    <div class="container mt-5">
+        <h1>Sales Management</h1>
+        <a href="{% url 'create_sale' %}" class="btn btn-primary mb-3">Create Sale</a>
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th>Book</th>
+                    <th>Year</th>
+                    <th>Sales</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for sale in sales %}
+                    <tr>
+                        <td>{{ sale.book_name }}</td>
+                        <td>{{ sale.year }}</td>
+                        <td>{{ sale.sales }}</td>
+                        <td>
+                            <a href="/edit-sale/{{ sale.id }}/" class="btn btn-warning btn-sm">Edit</a>
+                            <form action="/sale/{{ sale.id }}/delete/" method="post" style="display:inline;">
+                                {% csrf_token %}
+                                <button type="submit" class="btn btn-danger btn-sm">Delete</button>
+                            </form>
+                        </td>
+                        
+                    </tr>
+                {% empty %}
+                    <tr>
+                        <td colspan="4" class="text-center">No sales available</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</body>
+</html>

@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+{% include "navbar.html" %}
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edit Book</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+    <div class="container mt-5">
+        <h1 class="mb-4">Edit Book</h1>
+        <form method="post">
+            {% csrf_token %}
+            <div class="form-group">
+                <label for="name">Name:</label>
+                <input type="text" id="name" name="name" class="form-control" value="{{ book.name }}" required>
+            </div>
+
+            <div class="form-group">
+                <label for="author">Author:</label>
+                <select id="author" name="author" class="form-control" required>
+                    {% for author in authors %}
+                        <option value="{{ author.id }}" {% if author.id == book.author %}selected{% endif %}>
+                            {{ author.name }}
+                        </option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="date_of_publication">Date of Publication:</label>
+                <input type="date" id="date_of_publication" name="date_of_publication" class="form-control" value="{{ book.date_of_publication }}" required>
+            </div>
+
+            <div class="form-group">
+                <label for="summary">Summary:</label>
+                <textarea id="summary" name="summary" class="form-control" rows="3" required>{{ book.summary }}</textarea>
+            </div>
+
+
+            <button type="submit" class="btn btn-primary">Update Book</button>
+        </form>
+
+        <a href="{% url 'list_books' %}" class="btn btn-secondary mt-3">Back to Book List</a>
+    </div>
+
+    <!-- Bootstrap JS and dependencies -->
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.3/dist/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+</html>

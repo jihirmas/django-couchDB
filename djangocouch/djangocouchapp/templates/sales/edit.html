@@ -4,23 +4,25 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>View Book</title>
+    <title>Edit Sale</title>
     <!-- Bootstrap CSS -->
     <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
 </head>
 <body>
     <div class="container mt-5">
-        <h1 class="mb-4">Book Details</h1>
-        <div class="card">
-            <div class="card-body">
-                <h4 class="card-title"><strong>Title:</strong> {{ book.name }}</h4>
-                <p class="card-text"><strong>Author:</strong> {{ author.name }}</p>
-                <p class="card-text"><strong>Summary:</strong> {{ book.summary }}</p>
-                <p class="card-text"><strong>Date of Publication:</strong> {{ book.date_of_publication }}</p>
-                <p class="card-text"><strong>Sales:</strong> Rellenar acá</p>
-                <a href="{% url 'book_management' %}" class="btn btn-primary mt-3">Back to Book Management</a>
+        <h1 class="mb-4">Edit Sale</h1>
+        <form method="post">
+            {% csrf_token %}
+            <div class="form-group">
+                <label for="year">Year:</label>
+                <input type="number" id="year" name="year" class="form-control" value="{{ sale.year }}" required>
             </div>
-        </div>
+            <div class="form-group">
+                <label for="sales">Sales:</label>
+                <input type="number" id="sales" name="sales" class="form-control" value="{{ sale.sales }}" required>
+            </div>
+            <button type="submit" class="btn btn-primary">Save</button>
+        </form>
     </div>
 
     <!-- Bootstrap JS and dependencies -->

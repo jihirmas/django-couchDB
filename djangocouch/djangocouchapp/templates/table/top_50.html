@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+{% include "navbar.html" %}
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Top 50 Selling Books of All Time</title>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+    <div class="container mt-5">
+        <h1>Top 50 Selling Books of All Time</h1>
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th>Book</th>
+                    <th>Total Sales</th>
+                    <th>Author Total Sales</th>
+                    <th>Top 5 of Year</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for book in top_books %}
+                    <tr>
+                        <td>{{ book.book_name }}</td>
+                        <td>{{ book.sales }}</td>
+                        <td>{{ book.author_sales }}</td>
+                        <td>{{ book.is_top_5|yesno:"Yes,No" }}</td>
+                    </tr>
+                {% empty %}
+                    <tr>
+                        <td colspan="4" class="text-center">No books available</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</body>
+</html>
