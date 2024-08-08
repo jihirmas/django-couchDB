@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Edit Review</title>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+    <div class="container mt-5">
+        <h1>Edit Review</h1>
+        <form action="/edit-review/{{review_id}}/" method="post">
+            {% csrf_token %}
+            <div class="form-group">
+                <label for="book">Book</label>
+                <select class="form-control" id="book" name="book" required>
+                    <option value="{{review.book}}">{{book_name}}</option>
+                    {% for book in books %}
+                        <option value="{{ book.id }}">{{ book.name }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="review">Review</label>
+                <textarea class="form-control" id="review" name="review" rows="4" required>{{ review.review }}</textarea>
+            </div>
+            <div class="form-group">
+                <label for="score">Score</label>
+                <input type="number" class="form-control" id="score" name="score" value="{{ review.score }}" required>
+            </div>
+            <div class="form-group">
+                <label for="up_votes">Up-votes</label>
+                <input type="number" class="form-control" id="up_votes" name="up_votes" value="{{ review.up_votes }}" required>
+            </div>
+            <button type="submit" class="btn btn-primary">Edit</button>
+        </form>
+    </div>
+</body>

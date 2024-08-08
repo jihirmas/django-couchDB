@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Create Review</title>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+    <div class="container mt-5">
+        <h1>Create Review</h1>
+        <form action="/create-review/" method="post">
+            {% csrf_token %}
+            <div class="form-group">
+                <label for="book">Book</label>
+                <select class="form-control" id="book" name="book" required>
+                    <option value="">Select a book</option>
+                    {% for book in books %}
+                        <option value="{{ book.id }}">{{ book.name }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="review">Review</label>
+                <textarea class="form-control" id="review" name="review" rows="4" required></textarea>
+            </div>
+            <div class="form-group">
+                <label for="score">Score</label>
+                <input type="number" class="form-control" id="score" name="score" required>
+            </div>
+            <div class="form-group">
+                <label for="up_votes">Up-votes</label>
+                <input type="number" class="form-control" id="up_votes" name="up_votes" required>
+            </div>
+            <button type="submit" class="btn btn-primary">Create</button>
+        </form>
+    </div>
+</body>

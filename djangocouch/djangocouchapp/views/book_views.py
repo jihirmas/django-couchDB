@@ -34,7 +34,7 @@ def create_book(request):
         for doc in my_database.all_docs(include_docs=True)['rows'] 
         if 'doc' in doc and doc['doc'].get('type') == 'author'
     ]
-    print(f"Authors {authors}")
+    
     return render(request, 'book/create.html', {'authors': authors})
 
 def view_book(request, book_id):
