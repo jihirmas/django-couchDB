@@ -3,33 +3,33 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Search Results</title>
+    <title>Author Statistics</title>
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdn.datatables.net/1.10.21/css/jquery.dataTables.min.css" rel="stylesheet">
 </head>
 <body>
     <div class="container mt-5">
-        <h1>Search Results</h1>
-        <a href="/create-book/" class="btn btn-primary mb-3">Create Book</a>
-        <table id="bookTable" class="table table-striped">
+        <h1>Author Statistics</h1>
+        <table id="authorTable" class="table table-striped">
             <thead>
                 <tr>
-                    <th>Name</th>
-                    <th>Actions</th>
+                    <th>Author</th>
+                    <th>Number of Published Books</th>
+                    <th>Average Score</th>
+                    <th>Total Sales</th>
                 </tr>
             </thead>
             <tbody>
-                {% for book in books %}
+                {% for author in authors %}
                     <tr>
-                        <td>{{ book.name }}</td>
-                        <td>
-                            <a href="/view-book/{{ book.id }}/" class="btn btn-warning btn-sm">View</a>
-                            <a href="/book/{{ book.id }}/edit/" class="btn btn-warning btn-sm">Edit</a>
-                            <form action="/book/{{ book.id }}/delete/" method="post" style="display:inline;">
-                                {% csrf_token %}
-                                <button type="submit" class="btn btn-danger btn-sm">Delete</button>
-                            </form>
-                        </td>
+                        <td>{{ author.author_name }}</td>
+                        <td>{{ author.number_of_books }}</td>
+                        <td>{{ author.average_score }}</td>
+                        <td>{{ author.total_sales }}</td>
+                    </tr>
+                {% empty %}
+                    <tr>
+                        <td colspan="4" class="text-center">No authors available</td>
                     </tr>
                 {% endfor %}
             </tbody>
@@ -46,13 +46,11 @@
 
     <script>
         $(document).ready(function() {
-            $('#bookTable').DataTable({
+            $('#authorTable').DataTable({
                 "order": [], // No initial order
                 "columnDefs": [
-                    { "orderable": true, "targets": [0, 1] }
-                ],
-                "paging": true,
-                "searching": true
+                    { "orderable": true, "targets": [0, 1, 2, 3] }
+                ]
             });
         });
     </script>

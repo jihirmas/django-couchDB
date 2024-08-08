@@ -2,8 +2,17 @@ from faker import Faker
 import uuid
 from djangocouch.settings import MY_DATABASE
 import random
+from cloudant.client import CouchDB
 
 fake = Faker()
+database_name = 'grupo10'
+
+client = CouchDB("admin", "admin", url='http://127.0.0.1:5984', connect=True)
+if database_name in client:
+    MY_DATABASE = client[database_name]
+else:
+    MY_DATABASE = client.create_database('grupo10')
+
 
 # Generar varios autores
 def create_authors(num_authors):

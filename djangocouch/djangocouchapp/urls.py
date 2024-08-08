@@ -27,7 +27,8 @@ sales_urls = [
 tables_urls = [
     path('top-50-books/',tables_views.top_50_books_view, name='top_50_books'),
     path('search_books/', tables_views.search_view, name="search_books"),
-    path('top-10-rated-books/', tables_views.top_10_rated_books, name="top_10")
+    path('top-10-rated-books/', tables_views.top_10_rated_books, name="top_10"),
+    path('author-stats/', tables_views.author_statistics_view, name="author_stats")
 ]
 
 review_urls = [
