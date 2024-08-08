@@ -6,6 +6,7 @@ author_urls = [
     path("list-authors/", author_views.author_management, name='author_management'),
     path("<str:author_id>/edit/", author_views.edit_author, name='edit_author'),
     path("<str:author_id>/delete/", author_views.delete_author, name='delete_author'),
+    path('authors/view/<str:author_id>/', author_views.view_author, name='view_author'),
     path("", author_views.author_management, name='author_management'),
 ]
 
@@ -37,6 +38,7 @@ review_urls = [
     path("edit-review/<str:review_id>/", review_views.edit_review, name='edit_review'),
     path("delete-review/<str:review_id>/", review_views.delete_review, name='delete_review'),
     path("view-review/<str:review_id>/", review_views.view_review, name='view_review'),
+    path("list-reviews/", review_views.list_reviews, name='list_reviews'),
 ]
 
 

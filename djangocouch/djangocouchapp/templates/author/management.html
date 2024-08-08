@@ -24,6 +24,7 @@
                         <td>{{ author.name }}</td>
                         <td>{{ author.birth_date }}</td>
                         <td>
+                            <a href="{% url 'view_author' author.id %}" class="btn btn-warning btn-sm">View</a>
                             <a href="/{{ author.id }}/edit/" class="btn btn-warning btn-sm">Edit</a>
                             <form action="/{{ author.id }}/delete/" method="post" style="display:inline;">
                                 {% csrf_token %}

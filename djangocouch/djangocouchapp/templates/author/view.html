@@ -1,7 +1,27 @@
-<h1>Author Management</h1>
-<ul>
-    {% for row in authors.rows %}
-        <li><a href="{% url 'view_author' row.doc._id %}">{{ row.doc.name }}</a></li>
-    {% endfor %}
-</ul>
-<a href="{% url 'create_author' %}">Create Author</a>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>View Author</title>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+    <div class="container mt-5">
+        <h1>View Author</h1>
+        <dl class="row">
+            <dt class="col-sm-3">Name:</dt>
+            <dd class="col-sm-9">{{ author.name }}</dd>
+
+            <dt class="col-sm-3">Birth Date:</dt>
+            <dd class="col-sm-9">{{ author.birth_date }}</dd>
+
+            <dt class="col-sm-3">Country of Origin:</dt>
+            <dd class="col-sm-9">{{ author.country_of_origin }}</dd>
+
+            <dt class="col-sm-3">Description:</dt>
+            <dd class="col-sm-9">{{ author.description }}</dd>
+        </dl>
+        <a href="{% url 'author_management' %}" class="btn btn-primary">Back to Author Management</a>
+    </div>
+</body>
+</html>

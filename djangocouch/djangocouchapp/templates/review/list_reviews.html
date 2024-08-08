@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+{% include "navbar.html" %}
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Edit Review</title>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+    <div class="container mt-5">
+        <h1>Reviews Table</h1>
+        <a href="/create-review/" class="btn btn-primary mb-3">Create Review</a>
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Review Text</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for review in reviews %}
+                    <tr>
+                        <td>{{ review.doc.review }}</td>
+                        <td>
+                            <a href="/view-review/{{ review.id }}/" class="btn btn-warning btn-sm"> View</a>
+                            <a href="/edit-review/{{review.id}}/" class="btn btn-warning btn-sm">Edit</a>
+                            <a href="/delete-review/{{review.id}}/" class="btn btn-danger btn-sm">Delete</a>
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</body>
