@@ -65,3 +65,7 @@ def delete_author(request, author_id):
     author = my_database[author_id]
     author.delete()
     return redirect('author_management')
+
+def view_author(request, author_id):
+    author = my_database[author_id]
+    return render(request, 'author/view.html', {'author': author})
