@@ -86,4 +86,65 @@ def search_view(request):
     
     return render(request, 'table/search.html', {'books': final_books})
 
+def get_top_10_rated_books():
+    books = {}
+    reviews = []
+
+    all_docs = my_database.all_docs(include_docs=True)['rows']
+
+    # Recopilar todas las reseñas
+    for doc in all_docs:
+        if doc['doc'].get('type') == 'review':
+            reviews.append(doc['doc'])
     
+    # Agrupar las reseñas por libro y calcular las calificaciones promedio
+    for review in reviews:
+        book_id = review['book']
+        score = int(review['score'])
+
+        if book_id not in books:
+            books[book_id] = {
+                'total_score': 0,
+                'review_count': 0,
+                'highest_rated_review': review,
+                'lowest_rated_review': review
+            }
+        
+        books[book_id]['total_score'] += score
+        books[book_id]['review_count'] += 1
+        
+        # Actualizar la reseña más alta
+        if score > int(books[book_id]['highest_rated_review']['score']):
+            books[book_id]['highest_rated_review'] = review
+
+        # Actualizar la reseña más baja
+        if score < int(books[book_id]['lowest_rated_review']['score']):
+            books[book_id]['lowest_rated_review'] = review
+    
+    # Calcular la calificación promedio de cada libro
+    for book_id, data in books.items():
+        data['average_score'] = data['total_score'] / data['review_count']
+
+    # Ordenar los libros por calificación promedio y obtener los 10 más calificados
+    top_books = sorted(books.items(), key=lambda x: x[1]['average_score'], reverse=True)[:10]
+
+    # Obtener detalles del libro y del autor
+    result = []
+    for book_id, data in top_books:
+        book_doc = my_database[book_id]
+        author_doc = my_database[book_doc['author']]
+
+        result.append({
+            'book_id': book_id,
+            'book_name': book_doc['name'],
+            'highest_rated_review': my_database[data['highest_rated_review']["_id"]]["review"],
+            'lowest_rated_review': my_database[data['lowest_rated_review']["_id"]]["review"],
+        })
+
+    return result
+
+
+def top_10_rated_books(request):
+    top_books = get_top_10_rated_books()
+    print(top_books)
+    return render(request, 'table/top_10.html', {'top_books': top_books})

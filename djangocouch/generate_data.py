@@ -43,7 +43,7 @@ def create_book(author_id):
 def create_review(book_id):
     review = fake.text()
     score = random.randint(1, 5)
-    up_votes = random.randint(0, 10000)
+    up_votes = random.randint(-10000, 10000)
     
     data = {
         "_id": str(uuid.uuid4()),

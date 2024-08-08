@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+{% include "navbar.html" %}
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Top 10 Rated Books of All Time</title>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+    <div class="container mt-5">
+        <h1>Top 10 Rated Books of All Time</h1>
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th>Book</th>
+                    <th>Highest Rated Review</th>
+                    <th>Lowest Rated Review</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for book in top_books %}
+                    <tr>
+                        <td>{{ book.book_name }}</td>
+                        <td>{{ book.highest_rated_review }}</td>
+                        <td>{{ book.lowest_rated_review }}</td>
+                        <td>
+                            <a href="/view-book/{{ book.book_id }}/" class="btn btn-primary">View</a>
+                        </td>
+                    </tr>
+                {% empty %}
+                    <tr>
+                        <td colspan="5" class="text-center">No books available</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Bootstrap JS and dependencies -->
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.3/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+</body>
+</html>
