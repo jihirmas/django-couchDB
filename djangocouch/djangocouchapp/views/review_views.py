@@ -57,7 +57,14 @@ def edit_review(request, review_id):
     return render(request, 'review/edit.html', {'review': review, 'books': books, 'book_name': book_name, "review_id": review_id})
 
 def delete_review(request, review_id):
-    return 1
+    review = my_database[review_id]
+    review.delete()
+    return redirect('/create-review/')
 
 def view_review(request, review_id):
-    return render(request, 'review/view.html')
+    review = my_database[review_id]
+    for doc in my_database.all_docs(include_docs=True)['rows']:
+        if 'doc' in doc and doc['doc'].get('type') == 'book' and doc['doc'].get('_id') == review['book']:
+            book_name = doc['doc'].get('name')
+    
+    return render(request, 'review/view.html', {'review': review, 'review_id': review['_id'], 'book_name': book_name})
