@@ -35,6 +35,7 @@ review_urls = [
     path("edit-review/<str:review_id>/", review_views.edit_review, name='edit_review'),
     path("delete-review/<str:review_id>/", review_views.delete_review, name='delete_review'),
     path("view-review/<str:review_id>/", review_views.view_review, name='view_review'),
+    path("list-reviews/", review_views.list_reviews, name='list_reviews'),
 ]
 
 

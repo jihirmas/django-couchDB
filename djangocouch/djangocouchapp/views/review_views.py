@@ -59,7 +59,7 @@ def edit_review(request, review_id):
 def delete_review(request, review_id):
     review = my_database[review_id]
     review.delete()
-    return redirect('/create-review/')
+    return redirect('/list-reviews/')
 
 def view_review(request, review_id):
     review = my_database[review_id]
@@ -68,3 +68,10 @@ def view_review(request, review_id):
             book_name = doc['doc'].get('name')
     
     return render(request, 'review/view.html', {'review': review, 'review_id': review['_id'], 'book_name': book_name})
+
+def list_reviews(request):
+    reviews = []
+    for doc in my_database.all_docs(include_docs=True)['rows']:
+         if 'doc' in doc and doc['doc'].get('type') == 'review':
+             reviews.append(doc)
+    return render(request, 'review/list_reviews.html', {'reviews': reviews})
