@@ -1,7 +1,27 @@
 <!DOCTYPE html>
+{% include "navbar.html" %}
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Create Review</title>
+    <title>View Review</title>
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" rel="stylesheet">
 </head>
+<body>
+    <div class="container mt-5">
+        <h1 class="mb-4">Review Details</h1>
+        <div class="card">
+            <div class="card-body">
+                <h4 class="card-title"><strong>Book Associated:</strong> {{book_name}}</h4>
+                <p class="card-text"><strong>Review:</strong> {{review.review}}</p>
+                <p class="card-text"><strong>Score:</strong> {{review.score}}</p>
+                <p class="card-text"><strong>Up-votes:</strong> {{review.up_votes}}</p>
+                <a href="/delete-review/{{review_id}}/" class="btn btn-danger mt-3">Delete review</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap JS and dependencies -->
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.3/dist/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
