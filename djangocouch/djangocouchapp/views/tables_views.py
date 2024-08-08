@@ -146,5 +146,58 @@ def get_top_10_rated_books():
 
 def top_10_rated_books(request):
     top_books = get_top_10_rated_books()
-    print(top_books)
     return render(request, 'table/top_10.html', {'top_books': top_books})
+
+
+def get_author_statistics():
+    authors = []
+    books_by_author = {}
+    sales_by_book = {}
+    reviews_by_book = {}
+
+    all_docs = my_database.all_docs(include_docs=True)['rows']
+
+    # Organizar los datos
+    for doc in all_docs:
+        if doc['doc'].get('type') == 'book':
+            book = doc['doc']
+            author_id = book['author']
+            if author_id not in books_by_author:
+                books_by_author[author_id] = []
+            books_by_author[author_id].append(book)
+        elif doc['doc'].get('type') == 'sale':
+            sale = doc['doc']
+            book_id = sale['book']
+            if book_id not in sales_by_book:
+                sales_by_book[book_id] = 0
+            sales_by_book[book_id] += int(sale['sales'])
+        elif doc['doc'].get('type') == 'review':
+            review = doc['doc']
+            book_id = review['book']
+            if book_id not in reviews_by_book:
+                reviews_by_book[book_id] = []
+            reviews_by_book[book_id].append(int(review['score']))
+
+    # Calcular estadísticas por autor
+    for doc in all_docs:
+        if doc['doc'].get('type') == 'author':
+            author = doc['doc']
+            author_id = author['_id']
+            published_books = books_by_author.get(author_id, [])
+            total_sales = sum(sales_by_book.get(book['_id'], 0) for book in published_books)
+            all_scores = [score for book in published_books for score in reviews_by_book.get(book['_id'], [])]
+            average_score = sum(all_scores) / len(all_scores) if all_scores else 0
+
+            authors.append({
+                'author_id': author_id,
+                'author_name': author['name'],
+                'number_of_books': len(published_books),
+                'average_score': average_score,
+                'total_sales': total_sales,
+            })
+
+    return authors
+
+def author_statistics_view(request):
+    authors = get_author_statistics()
+    return render(request, 'table/author_stats.html', {'authors': authors})
