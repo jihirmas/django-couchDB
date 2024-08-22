@@ -7,7 +7,7 @@ from cloudant.client import CouchDB
 fake = Faker()
 database_name = 'grupo10'
 
-client = CouchDB("admin", "admin", url='http://127.0.0.1:5984', connect=True)
+client = CouchDB("admin", "admin", url='http://my-couchdb:5984', connect=True)
 if database_name in client:
     MY_DATABASE = client[database_name]
 else:
@@ -78,9 +78,9 @@ def create_sales(year_inicial, year_final, book):
         MY_DATABASE.create_document(data)
 
 # Por ejemplo, crear 10 autores
-authors = create_authors(50)
+authors = create_authors(5)
 for i, author in enumerate(authors):
-    for n in range(6):
+    for n in range(3):
         book = create_book(author_id=author["_id"])
         print(f"creating book {n*i + n}")
         n_reviews = random.randint(1,11)
