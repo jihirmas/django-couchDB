@@ -1,19 +1,24 @@
 from django.conf import settings
 from django.shortcuts import render, redirect
 import uuid
+from django.core.cache import cache
 
 my_database = settings.MY_DATABASE
 
 def author_management(request):
-    authors = [
-        {
-            'id': doc['id'], 
-            'name': doc['doc']['name'], 
-            'birth_date': doc['doc'].get('birth_date', '')
-        } 
-        for doc in my_database.all_docs(include_docs=True)['rows'] 
-        if 'doc' in doc and doc['doc'].get('type') == 'author'
-    ]
+    authors = cache.get('authors_all')
+    if not authors:
+        authors = [
+            {
+                'id': doc['id'], 
+                'name': doc['doc']['name'], 
+                'birth_date': doc['doc'].get('birth_date', '')
+            } 
+            for doc in my_database.all_docs(include_docs=True)['rows'] 
+            if 'doc' in doc and doc['doc'].get('type') == 'author'
+        ]
+        cache.set('authors_all', authors, timeout=settings.CACHE_TTL)
+    
     return render(request, 'author/management.html', {'authors': authors})
 
 def create_author(request):
@@ -37,12 +42,18 @@ def create_author(request):
     return render(request, 'author/create.html')
 
 def list_authors(request):
-    authors = my_database.all_docs(include_docs=True)
+    authors = cache.get('authors_all_data')
+    if not authors:
+        authors = my_database.all_docs(include_docs=True)
+        cache.set('authors_all_data', authors, timeout=settings.CACHE_TTL)
     return render(request, 'author/list.html', {'authors': authors})
 
 
 def edit_author(request, author_id):
-    author = my_database[author_id]
+    author = cache.get(f"author_{author_id}")
+    if not author:
+        author = my_database[author_id]
+        cache.set(f"author_{author_id}", author, timeout=settings.CACHE_TTL)
     if request.method == "POST":
         name = request.POST.get('name')
         birth_date = request.POST.get('birth_date')
@@ -55,6 +66,7 @@ def edit_author(request, author_id):
         author['country_of_origin'] = country_of_origin
         author['description'] = description
         my_database[author_id] = author  
+        cache.set(f"author_{author_id}", author, timeout=settings.CACHE_TTL)
         author.save() #ojo que acá se guarda el documento no la bd para que funcione
         print(my_database[author_id])
         
@@ -64,8 +76,12 @@ def edit_author(request, author_id):
 def delete_author(request, author_id):
     author = my_database[author_id]
     author.delete()
+    cache.delete(f"author_{author_id}")
     return redirect('author_management')
 
 def view_author(request, author_id):
-    author = my_database[author_id]
+    author = cache.get(f"author_{author_id}")
+    if not author:
+        author = my_database[author_id]
+        cache.set(f"author_{author_id}", author, timeout=settings.CACHE_TTL)
     return render(request, 'author/view.html', {'author': author})
