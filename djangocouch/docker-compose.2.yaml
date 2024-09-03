@@ -1,0 +1,45 @@
+version: '3.8'
+
+services:
+  couchdb:
+    image: couchdb:latest
+    container_name: my-couchdb
+    environment:
+      - COUCHDB_USER=admin
+      - COUCHDB_PASSWORD=admin
+    ports:
+      - "5984:5984"
+    networks:
+      - my-network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:5984/_up"]
+      interval: 30s
+      retries: 3
+      start_period: 10s
+      timeout: 10s
+
+  redis:
+    image: redis:latest
+    container_name: my-redis
+    ports:
+      - "6379:6379"
+    networks:
+      - my-network
+
+  django:
+    build: .
+    container_name: my-django-app
+    ports:
+      - "8000:8000"
+    depends_on:
+      couchdb:
+        condition: service_healthy
+      redis:
+        condition: service_started
+    networks:
+      - my-network
+    command: sh -c "python generate_data.py && python manage.py migrate && python manage.py runserver 0.0.0.0:8000"
+
+networks:
+  my-network:
+    driver: bridge

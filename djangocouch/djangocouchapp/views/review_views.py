@@ -84,12 +84,10 @@ def view_review(request, review_id):
 
 def list_reviews(request):
     reviews = cache.get('reviews_all')
-    print(len(reviews), "reviews CACHE")
     if not reviews:
         reviews = []
         for doc in my_database.all_docs(include_docs=True)['rows']:
             if 'doc' in doc and doc['doc'].get('type') == 'review':
                 reviews.append(doc)
-        print(len(reviews), "reviews")
         cache.set('reviews_all', reviews, timeout=settings.CACHE_TTL)
     return render(request, 'review/list_reviews.html', {'reviews': reviews})
