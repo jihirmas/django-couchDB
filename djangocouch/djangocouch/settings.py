@@ -84,7 +84,7 @@ DATABASES = {
 
 
 # Couch DB Config
-COUCHDB_SERVER = 'http://my-couchdb:5984'
+COUCHDB_SERVER = 'http://localhost:5984'
 
 # Password validation
 # https://docs.djangoproject.com/en/5.0/ref/settings/#auth-password-validators
@@ -130,7 +130,7 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 database_name = 'grupo10'
 
 from cloudant.client import CouchDB
-client = CouchDB("admin", "admin", url='http://my-couchdb:5984', connect=True)
+client = CouchDB("admin", "admin", url='http://localhost:5984', connect=True)
 if database_name in client:
     MY_DATABASE = client[database_name]
 else:
