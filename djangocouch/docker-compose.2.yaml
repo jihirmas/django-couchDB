@@ -52,6 +52,8 @@ services:
         condition: service_started
     networks:
       - my-network
+    enviorment:
+      - USE_REDIS=True
     command: sh -c "python generate_data.py && python manage.py migrate && python manage.py runserver 0.0.0.0:8000"
 
 networks:

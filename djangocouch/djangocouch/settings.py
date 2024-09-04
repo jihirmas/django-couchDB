@@ -140,17 +140,19 @@ else:
 APPEND_SLASH = False
 
 CACHE_TTL = 60 * 15
-"""
-CACHES = {
-    'default': {
-        'BACKEND': 'django_redis.cache.RedisCache',
-        'LOCATION': 'redis://my-redis:6379/1',  # La URL donde Redis está corriendo
-        'OPTIONS': {
-            'CLIENT_CLASS': 'django_redis.client.DefaultClient',
+
+USE_REDIS = os.getenv('USE_REDIS', '0') == '1'
+
+if USE_REDIS:
+    CACHES = {
+        'default': {
+            'BACKEND': 'django_redis.cache.RedisCache',
+            'LOCATION': 'redis://my-redis:6379/1',  # La URL donde Redis está corriendo
+            'OPTIONS': {
+                'CLIENT_CLASS': 'django_redis.client.DefaultClient',
+            }
         }
     }
-}
-"""
 
 
 SESSION_ENGINE = 'django.contrib.sessions.backends.signed_cookies'
