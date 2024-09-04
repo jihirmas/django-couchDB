@@ -24,7 +24,7 @@ def create_book(request):
             "type": "book"
         }
         my_database.create_document(data)
-
+        cache.delete('books')
         # Redirect to the book management page
         return redirect('/book-management/')
  
@@ -64,10 +64,7 @@ def list_books(request):
 
 
 def edit_book(request, book_id):
-    book = cache.get(f"book_{book_id}")
-    if not book:
-        book = my_database[book_id]
-        cache.set(f"book_{book_id}", book, timeout=settings.CACHE_TTL)
+    book = my_database[book_id]
 
     if request.method == "POST":
         name = request.POST.get('name')
@@ -82,6 +79,7 @@ def edit_book(request, book_id):
         my_database[book_id] = book
         book.save()
         cache.set(f"book_{book_id}", book, timeout=settings.CACHE_TTL)
+        cache.delete('books')
         return redirect('book_management')
     
     authors = cache.get('authors')
@@ -99,4 +97,5 @@ def delete_book(request, book_id):
     book = my_database[book_id]
     book.delete()
     cache.delete(f"book_{book_id}")
+    cache.delete('books')
     return redirect('/list_books/')

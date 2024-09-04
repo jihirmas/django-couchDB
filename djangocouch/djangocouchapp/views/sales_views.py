@@ -54,7 +54,7 @@ def create_sale(request):
         }
         my_database.create_document(data)
         cache.set(f"sale_{data['_id']}", data, timeout=settings.CACHE_TTL)
-        
+        cache.delete('sales_all')
         return redirect('/list-sales/')
     books = cache.get('books')
     if not books:
@@ -71,6 +71,7 @@ def delete_sale(request, sale_id):
     sale = my_database[sale_id]
     sale.delete()
     cache.delete(f"sale_{sale_id}")
+    cache.delete('sales_all')
     return redirect('/list-sales/')
 
 
@@ -89,7 +90,7 @@ def edit_sale(request, sale_id):
         my_database[sale_id] = sale  
         sale.save()
         cache.set(f"sale_{sale_id}", sale, timeout=settings.CACHE_TTL)
-        
+        cache.delete('sales_all')
         return redirect('/list-sales/')
 
     return render(request, 'sales/edit.html', {"sale": sale})

@@ -28,7 +28,7 @@ def create_review(request):
             if 'doc' in doc and doc['doc'].get('type') == 'book'
         ]
         cache.set('books', books, timeout=settings.CACHE_TTL)
-    
+    cache.delete('reviews_all')
     return render(request, 'review/create.html', {'books': books})
 
 def edit_review(request, review_id):
@@ -51,7 +51,7 @@ def edit_review(request, review_id):
         my_database[review_id] = review  
         review.save() 
         cache.set(f"review_{review_id}", review, timeout=settings.CACHE_TTL)
-    
+        cache.delete('reviews_all')
         return redirect(f'/edit-review/{review_id}/')
     
     books = []
@@ -68,6 +68,7 @@ def delete_review(request, review_id):
     review = my_database[review_id]
     review.delete()
     cache.delete(f"review_{review_id}")
+    cache.delete('reviews_all')
     return redirect('/list-reviews/')
 
 def view_review(request, review_id):

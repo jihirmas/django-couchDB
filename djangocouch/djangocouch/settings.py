@@ -149,3 +149,7 @@ CACHES = {
         }
     }
 }
+
+
+SESSION_ENGINE = 'django.contrib.sessions.backends.signed_cookies'
+SESSION_COOKIE_AGE = 1209600  # 2 semanas en segundos

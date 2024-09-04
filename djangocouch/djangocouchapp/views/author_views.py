@@ -37,7 +37,8 @@ def create_author(request):
             "type": "author"
         }
         my_database.create_document(data)
-
+        cache.delete('authors_all_data')
+        cache.delete('authors_all')
         return redirect('author_management')
     return render(request, 'author/create.html')
 
@@ -69,7 +70,8 @@ def edit_author(request, author_id):
         cache.set(f"author_{author_id}", author, timeout=settings.CACHE_TTL)
         author.save() #ojo que acá se guarda el documento no la bd para que funcione
         print(my_database[author_id])
-        
+        cache.delete('authors_all_data')
+        cache.delete('authors_all')
         return redirect('author_management')
     return render(request, 'author/edit.html', {'author': author})
 
@@ -77,6 +79,8 @@ def delete_author(request, author_id):
     author = my_database[author_id]
     author.delete()
     cache.delete(f"author_{author_id}")
+    cache.delete('authors_all_data')
+    cache.delete('authors_all')
     return redirect('author_management')
 
 def view_author(request, author_id):
