@@ -3,8 +3,10 @@ from django.conf import settings
 from django.shortcuts import render, redirect
 import uuid
 from django.core.cache import cache
+from django.core.files.storage import FileSystemStorage
 
 my_database = settings.MY_DATABASE
+
 
 
 def create_book(request):
@@ -13,6 +15,14 @@ def create_book(request):
         author_id = request.POST.get('author')
         date_of_publication = request.POST.get('date_of_publication')
         summary = request.POST.get('summary')
+        fs = FileSystemStorage(location=settings.MEDIA_ROOT)
+
+        if request.FILES.get("file_url"): 
+            image = request.FILES["file_url"]
+            filename = fs.save(image.name,image)
+            file_url = fs.url(filename)
+        else:
+            file_url = None
 
         # Create and save a new book
         data = {
@@ -21,7 +31,8 @@ def create_book(request):
             "author": author_id,
             "date_of_publication": date_of_publication,
             "summary": summary,
-            "type": "book"
+            "type": "book",
+            "file_url": file_url
         }
         my_database.create_document(data)
         cache.delete('books')
@@ -36,6 +47,7 @@ def create_book(request):
             if 'doc' in doc and doc['doc'].get('type') == 'author'
         ]
     
+    
     return render(request, 'book/create.html', {'authors': authors})
 
 def view_book(request, book_id):
@@ -43,11 +55,15 @@ def view_book(request, book_id):
     if not book:
         book = my_database[book_id]
         cache.set(f"book_{book_id}", book, timeout=settings.CACHE_TTL)
+    
     author = cache.get(f"author_{book_id}")
     if not author:
         author = my_database[book['author']]
         cache.set(f"author_{book_id}", author, timeout=settings.CACHE_TTL)
-    return render(request, 'book/view.html', {'book': book, 'author': author})
+    
+    cover_image_url = book.get("file_url", None)
+
+    return render(request, 'book/view.html', {'book': book, 'author': author, 'cover_image_url': cover_image_url})
 
 
 def list_books(request):
