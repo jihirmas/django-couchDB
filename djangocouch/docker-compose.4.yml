@@ -42,6 +42,9 @@ services:
         condition: service_healthy
     networks:
       - my-network
+    labels:
+      traefik.http.routers.django-app.rule: "Host(`app.localhost`)"  # Traefik route based on host
+      traefik.http.services.django-app.loadbalancer.server.port: "8000"  # Forward traffic to Django port 8000
     command: sh -c "python generate_data.py && python manage.py migrate && python manage.py runserver 0.0.0.0:8000"
 
   traefik:
@@ -52,8 +55,8 @@ services:
       - "--providers.docker=true"
       - "--entrypoints.web.address=:80"
     ports:
-      - "80:80" 
-      - "8080:8080"
+      - "80:80"  # HTTP traffic for app.localhost
+      - "8080:8080"  # Traefik dashboard
     networks:
       - my-network
     volumes:

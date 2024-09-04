@@ -100,4 +100,5 @@ def view_author(request, author_id):
         author = my_database[author_id]
         cache.set(f"author_{author_id}", author, timeout=settings.CACHE_TTL)
     image_url = author.get("file_url", None)
+    #print(image_url)
     return render(request, 'author/view.html', {'author': author,'cover_image_url': image_url})
