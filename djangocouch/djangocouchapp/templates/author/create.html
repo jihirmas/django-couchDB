@@ -9,7 +9,7 @@
 <body>
     <div class="container mt-5">
         <h1>Create Author</h1>
-        <form action="http://127.0.0.1:8000/create-author/" method="post">
+        <form  method="post" enctype="multipart/form-data">
             {% csrf_token %}
             <div class="form-group">
                 <label for="name">Name</label>
@@ -26,6 +26,10 @@
             <div class="form-group">
                 <label for="description">Descriptiom</label>
                 <input type="text" class="form-control" id="description" name="description" required>
+            </div>
+            <div class="form-group"> <!-- New field for image upload -->
+                <label for="file_url">Author Image</label>
+                <input type="file" class="form-control-file" id="file_url" name="file_url">
             </div>
             <button type="submit" class="btn btn-primary">Create</button>
         </form>

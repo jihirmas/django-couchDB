@@ -21,6 +21,13 @@
             <dt class="col-sm-3">Description:</dt>
             <dd class="col-sm-9">{{ author.description }}</dd>
         </dl>
+        {% if cover_image_url %}
+                    <p class="card-text"><strong>Cover Image:</strong></p>
+                    <img src="{{ cover_image_url }}" class="img-fluid" alt="Book Cover Image">
+                {% else %}
+                    <p class="card-text"><strong>No cover image available.</strong></p>
+                    <img src="https://via.placeholder.com/150" class="img-fluid" alt="Placeholder Image">
+                {% endif %}
         <a href="{% url 'author_management' %}" class="btn btn-primary">Back to Author Management</a>
     </div>
 </body>

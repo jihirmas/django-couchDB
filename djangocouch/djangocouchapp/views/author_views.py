@@ -2,6 +2,7 @@ from django.conf import settings
 from django.shortcuts import render, redirect
 import uuid
 from django.core.cache import cache
+from django.core.files.storage import FileSystemStorage
 
 my_database = settings.MY_DATABASE
 
@@ -28,13 +29,23 @@ def create_author(request):
         country_of_origin = request.POST.get('country_of_origin')
         description= request.POST.get('description')
 
+        fs = FileSystemStorage(location=settings.MEDIA_ROOT)
+
+        if request.FILES.get("file_url"): 
+            image = request.FILES["file_url"]
+            filename = fs.save(image.name,image)
+            file_url = fs.url(filename)
+        else:
+            file_url = None
+
         data = {
             "_id": str(uuid.uuid4()),
             "name": name,
             "birth_date": birth_date,
             "country_of_origin": country_of_origin,
             "description": description,
-            "type": "author"
+            "type": "author",
+            "file_url": file_url
         }
         my_database.create_document(data)
         cache.delete('authors_all_data')
@@ -88,4 +99,5 @@ def view_author(request, author_id):
     if not author:
         author = my_database[author_id]
         cache.set(f"author_{author_id}", author, timeout=settings.CACHE_TTL)
-    return render(request, 'author/view.html', {'author': author})
+    image_url = author.get("file_url", None)
+    return render(request, 'author/view.html', {'author': author,'cover_image_url': image_url})
