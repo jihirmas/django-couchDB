@@ -141,9 +141,9 @@ def create_sales(year_inicial, year_final, book):
         MY_DATABASE.create_document(data)
 
 # Por ejemplo, crear 10 autores
-authors = create_authors(2)
+authors = create_authors(3)
 for i, author in enumerate(authors):
-    for n in range(3):
+    for n in range(2):
         book = create_book(author_id=author["_id"])
         print(f"creating book {n*i + n}")
         n_reviews = random.randint(1,11)

@@ -82,30 +82,30 @@ def search_view(request):
             all_docs = my_database.all_docs(include_docs=True)['rows']
             cache.set('all_docs', all_docs, timeout=settings.CACHE_TTL)
             
-            for doc in all_docs:
-                if doc['doc'].get('type') == 'book':
-                    book = doc['doc']
-                    book_id = book['_id']
-                    book_name = book['name']
-                    book_summary = book["summary"]
-                    author_id = book['author']
-                    year = book['date_of_publication'][:4]
-                    
+        for doc in all_docs:
+            if doc['doc'].get('type') == 'book':
+                book = doc['doc']
+                book_id = book['_id']
+                book_name = book['name']
+                book_summary = book["summary"]
+                author_id = book['author']
+                year = book['date_of_publication'][:4]
+                
 
-                    
-                    books.append({
-                        'id': book_id,
-                        'name': book_name,
-                        'author_id': author_id,
-                        'year': year,
-                        'book_summary' : book_summary
-                    })
+                
+                books.append({
+                    'id': book_id,
+                    'name': book_name,
+                    'author_id': author_id,
+                    'year': year,
+                    'book_summary' : book_summary
+                })
+        
+        for book in books:
+            if search_param in book['book_summary']:
+                final_books.append(book)
             
-            for book in books:
-                if search_param in book['book_summary']:
-                    final_books.append(book)
             
-            print(final_books)
     
     else:
 
