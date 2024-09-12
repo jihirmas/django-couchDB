@@ -1,5 +1,6 @@
 from django.shortcuts import render
 from django.conf import settings
+from django.core.cache import cache
 
 my_database = settings.MY_DATABASE
 
@@ -13,7 +14,10 @@ def get_top_50_books():
     books = []
     authors_sales = {}
 
-    all_docs = my_database.all_docs(include_docs=True)['rows']
+    all_docs = cache.get('all_docs')
+    if not all_docs:
+        all_docs = my_database.all_docs(include_docs=True)['rows']
+        cache.set('all_docs', all_docs, timeout=settings.CACHE_TTL)
 
     for doc in all_docs:
         if doc['doc'].get('type') == 'book':
@@ -68,8 +72,11 @@ def search_view(request):
 
     if not SEARCH_ENGINE_ACTIVE:
 
-        all_docs = my_database.all_docs(include_docs=True)['rows']
-
+    all_docs = cache.get('all_docs')
+    if not all_docs:
+            all_docs = my_database.all_docs(include_docs=True)['rows']
+        cache.set('all_docs', all_docs, timeout=settings.CACHE_TTL)
+        
         for doc in all_docs:
             if doc['doc'].get('type') == 'book':
                 book = doc['doc']
@@ -121,7 +128,10 @@ def get_top_10_rated_books():
     books = {}
     reviews = []
 
-    all_docs = my_database.all_docs(include_docs=True)['rows']
+    all_docs = cache.get('all_docs')
+    if not all_docs:
+        all_docs = my_database.all_docs(include_docs=True)['rows']
+        cache.set('all_docs', all_docs, timeout=settings.CACHE_TTL)
 
     # Recopilar todas las reseñas
     for doc in all_docs:
@@ -186,8 +196,10 @@ def get_author_statistics():
     sales_by_book = {}
     reviews_by_book = {}
 
-    all_docs = my_database.all_docs(include_docs=True)['rows']
-
+    all_docs = cache.get('all_docs')
+    if not all_docs:
+        all_docs = my_database.all_docs(include_docs=True)['rows']
+        cache.set('all_docs', all_docs, timeout=settings.CACHE_TTL)
     # Organizar los datos
     for doc in all_docs:
         if doc['doc'].get('type') == 'book':

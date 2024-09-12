@@ -1,0 +1,67 @@
+version: '3.8'
+
+services:
+  init-couchdb:
+    image: curlimages/curl:latest
+    depends_on:
+      couchdb:
+        condition: service_healthy
+    networks:
+      - my-network
+    entrypoint: >
+      sh -c "
+        curl -X PUT http://admin:admin@couchdb:5984/_users &&
+        curl -X PUT http://admin:admin@couchdb:5984/_replicator &&
+        curl -X PUT http://admin:admin@couchdb:5984/_global_changes
+      "
+
+  couchdb:
+    image: couchdb:latest
+    container_name: my-couchdb
+    environment:
+      - COUCHDB_USER=admin
+      - COUCHDB_PASSWORD=admin
+    ports:
+      - "5984:5984"
+    networks:
+      - my-network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:5984/_up"]
+      interval: 30s
+      retries: 3
+      start_period: 10s
+      timeout: 10s
+
+  django:
+    build: .
+    container_name: my-django-app
+    ports:
+      - "8000:8000"
+    depends_on:
+      couchdb:
+        condition: service_healthy
+    networks:
+      - my-network
+    labels:
+      traefik.http.routers.django-app.rule: "Host(`app.localhost`)"  # Traefik route based on host
+      traefik.http.services.django-app.loadbalancer.server.port: "8000"  # Forward traffic to Django port 8000
+    command: sh -c "python generate_data.py && python manage.py migrate && python manage.py runserver 0.0.0.0:8000"
+
+  traefik:
+    image: traefik:v2.5
+    container_name: my-traefik
+    command:
+      - "--api.insecure=true"
+      - "--providers.docker=true"
+      - "--entrypoints.web.address=:80"
+    ports:
+      - "80:80"  # HTTP traffic for app.localhost
+      - "8080:8080"  # Traefik dashboard
+    networks:
+      - my-network
+    volumes:
+      - "/var/run/docker.sock:/var/run/docker.sock:ro"
+
+networks:
+  my-network:
+    driver: bridge

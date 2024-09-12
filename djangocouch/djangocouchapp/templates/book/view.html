@@ -18,6 +18,16 @@
                 <p class="card-text"><strong>Summary:</strong> {{ book.summary }}</p>
                 <p class="card-text"><strong>Date of Publication:</strong> {{ book.date_of_publication }}</p>
                 <p class="card-text"><strong>Sales:</strong> Rellenar acá</p>
+
+                <!-- Conditionally display the cover image if it exists, else show a placeholder -->
+                {% if cover_image_url %}
+                    <p class="card-text"><strong>Cover Image:</strong></p>
+                    <img src="{{ cover_image_url }}" class="img-fluid" alt="Book Cover Image">
+                {% else %}
+                    <p class="card-text"><strong>No cover image available.</strong></p>
+                    <img src="https://via.placeholder.com/150" class="img-fluid" alt="Placeholder Image">
+                {% endif %}
+
                 <a href="{% url 'book_management' %}" class="btn btn-primary mt-3">Back to Book Management</a>
             </div>
         </div>

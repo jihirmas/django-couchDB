@@ -1,6 +1,7 @@
 from django.conf import settings
 from django.shortcuts import render, redirect
 import uuid
+from django.core.cache import cache
 
 my_database = settings.MY_DATABASE
 SEARCH_ENGINE_ACTIVE = settings.SEARCH_ENGINE_ACTIVE
@@ -23,16 +24,22 @@ def create_review(request):
             "type": "review",
         }
         my_database.create_document(data) 
-    books = [
-        {'id': doc['id'], 'name': doc['doc']['name']} 
-        for doc in my_database.all_docs(include_docs=True)['rows'] 
-        if 'doc' in doc and doc['doc'].get('type') == 'book'
-    ]
-    
+    books = cache.get('books')
+    if not books:
+        books = [
+            {'id': doc['id'], 'name': doc['doc']['name']} 
+            for doc in my_database.all_docs(include_docs=True)['rows'] 
+            if 'doc' in doc and doc['doc'].get('type') == 'book'
+        ]
+        cache.set('books', books, timeout=settings.CACHE_TTL)
+    cache.delete('reviews_all')
     return render(request, 'review/create.html', {'books': books})
 
 def edit_review(request, review_id):
-    review = my_database[review_id]
+    review = cache.get(f"review_{review_id}")
+    if not review:
+        review = my_database[review_id]
+        cache.set(f"review_{review_id}", review, timeout=settings.CACHE_TTL)
     if request.method == "POST":
         
         book_id = request.POST.get('book')
@@ -47,9 +54,10 @@ def edit_review(request, review_id):
         review['up_votes'] = up_votes
         my_database[review_id] = review  
         review.save() 
-        
-        
+        cache.set(f"review_{review_id}", review, timeout=settings.CACHE_TTL)
+        cache.delete('reviews_all')
         return redirect(f'/edit-review/{review_id}/')
+    
     books = []
     for doc in my_database.all_docs(include_docs=True)['rows']:
         if 'doc' in doc and doc['doc'].get('type') == 'book' and doc['doc'].get('_id') != review['book']:
@@ -63,10 +71,16 @@ def edit_review(request, review_id):
 def delete_review(request, review_id):
     review = my_database[review_id]
     review.delete()
+    cache.delete(f"review_{review_id}")
+    cache.delete('reviews_all')
     return redirect('/list-reviews/')
 
 def view_review(request, review_id):
-    review = my_database[review_id]
+    review = cache.get(f"review_{review_id}")
+    if not review:
+        review = my_database[review_id]
+        cache.set(f"review_{review_id}", review, timeout=settings.CACHE_TTL)
+
     for doc in my_database.all_docs(include_docs=True)['rows']:
         if 'doc' in doc and doc['doc'].get('type') == 'book' and doc['doc'].get('_id') == review['book']:
             book_name = doc['doc'].get('name')
@@ -74,8 +88,11 @@ def view_review(request, review_id):
     return render(request, 'review/view.html', {'review': review, 'review_id': review['_id'], 'book_name': book_name})
 
 def list_reviews(request):
-    reviews = []
-    for doc in my_database.all_docs(include_docs=True)['rows']:
-         if 'doc' in doc and doc['doc'].get('type') == 'review':
-             reviews.append(doc)
+    reviews = cache.get('reviews_all')
+    if not reviews:
+        reviews = []
+        for doc in my_database.all_docs(include_docs=True)['rows']:
+            if 'doc' in doc and doc['doc'].get('type') == 'review':
+                reviews.append(doc)
+        cache.set('reviews_all', reviews, timeout=settings.CACHE_TTL)
     return render(request, 'review/list_reviews.html', {'reviews': reviews})

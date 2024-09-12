@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/5.0/ref/settings/
 """
 
 from pathlib import Path
+import os
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -180,3 +181,27 @@ if not CLIENT_ES.indices.exists(index='reviews') and CLIENT_ES.ping():
     CLIENT_ES.indices.create(index='reviews', mappings=mappings_reviews)
     SEARCH_ENGINE_ACTIVE = True
     
+
+
+
+CACHE_TTL = 60 * 15
+
+USE_REDIS = os.getenv('USE_REDIS', '0') == '1'
+
+if USE_REDIS:
+    CACHES = {
+        'default': {
+            'BACKEND': 'django_redis.cache.RedisCache',
+            'LOCATION': 'redis://my-redis:6379/1',  # La URL donde Redis está corriendo
+            'OPTIONS': {
+                'CLIENT_CLASS': 'django_redis.client.DefaultClient',
+            }
+        }
+    }
+
+
+SESSION_ENGINE = 'django.contrib.sessions.backends.signed_cookies'
+SESSION_COOKIE_AGE = 1209600  # 2 semanas en segundos
+
+MEDIA_ROOT = os.path.join(BASE_DIR,"media")
+MEDIA_URL = "/media/"
