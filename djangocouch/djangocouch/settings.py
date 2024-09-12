@@ -130,6 +130,8 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 database_name = 'grupo10'
 
 from cloudant.client import CouchDB
+from elasticsearch import Elasticsearch
+
 client = CouchDB("admin", "admin", url='http://my-couchdb:5984', connect=True)
 if database_name in client:
     MY_DATABASE = client[database_name]
@@ -137,3 +139,44 @@ else:
     MY_DATABASE = client.create_database('grupo10')
 
 APPEND_SLASH = False
+
+CLIENT_ES = Elasticsearch(
+    ["https://my-elasticsearch:9200"],  
+    http_auth=("elastic", "admin"),                           
+    verify_certs=False,
+)
+
+SEARCH_ENGINE_ACTIVE = False
+
+
+
+mappings_books = {
+    'properties':{
+        'name': {'type': 'text'},
+        'author': {'type': 'text'},
+        'date_of_publication': {'type': 'text'},
+        'summary': {'type': 'text'},
+        'type': {'type': 'text'},
+    }
+}
+mappings_reviews = {
+    'properties':{
+        'book': {'type': 'text'},
+        'review': {'type': 'text'},
+        'score': {'type': 'integer'},
+        'up_votes': {'type': 'integer'},
+        'type': {'type': 'text'},
+    }
+}
+
+if not CLIENT_ES.indices.exists(index='books') and CLIENT_ES.ping():
+    CLIENT_ES.indices.create(index='books', mappings=mappings_books)
+    SEARCH_ENGINE_ACTIVE = True
+    
+
+
+
+if not CLIENT_ES.indices.exists(index='reviews') and CLIENT_ES.ping():
+    CLIENT_ES.indices.create(index='reviews', mappings=mappings_reviews)
+    SEARCH_ENGINE_ACTIVE = True
+    

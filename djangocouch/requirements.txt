@@ -5,6 +5,8 @@ cloudant==2.15.0
 Django==5.0.7
 django-filter==1.0.1
 djangorestframework==3.5.3
+elastic-transport==8.15.0
+elasticsearch==8.15.0
 Faker==26.2.0
 ibm-cloud-sdk-core==3.20.3
 ibmcloudant==0.9.1

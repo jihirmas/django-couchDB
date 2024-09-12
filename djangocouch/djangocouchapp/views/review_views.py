@@ -3,6 +3,10 @@ from django.shortcuts import render, redirect
 import uuid
 
 my_database = settings.MY_DATABASE
+SEARCH_ENGINE_ACTIVE = settings.SEARCH_ENGINE_ACTIVE
+client_es = settings.CLIENT_ES
+if client_es.ping() and client_es.indices.exists(index='reviews'):
+    SEARCH_ENGINE_ACTIVE = True
 
 def create_review(request):
     if request.method == "POST":

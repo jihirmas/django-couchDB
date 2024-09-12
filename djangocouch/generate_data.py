@@ -3,7 +3,7 @@ import uuid
 from djangocouch.settings import MY_DATABASE
 import random
 from cloudant.client import CouchDB
-
+from elasticsearch import Elasticsearch
 fake = Faker()
 database_name = 'grupo10'
 
@@ -13,6 +13,44 @@ if database_name in client:
 else:
     MY_DATABASE = client.create_database('grupo10')
 
+SEARCH_ENGINE_ACTIVE = False
+client_es = Elasticsearch(
+    ["https://my-elasticsearch:9200"],  
+    http_auth=("elastic", "admin"),                           
+    verify_certs=False,
+)
+mappings_books = {
+    'properties':{
+        'name': {'type': 'text'},
+        'author': {'type': 'text'},
+        'date_of_publication': {'type': 'text'},
+        'summary': {'type': 'text'},
+        'type': {'type': 'text'},
+    }
+}
+mappings_reviews = {
+    'properties':{
+        'book': {'type': 'text'},
+        'review': {'type': 'text'},
+        'score': {'type': 'integer'},
+        'up_votes': {'type': 'integer'},
+        'type': {'type': 'text'},
+    }
+}
+if not client_es.indices.exists(index='books') and client_es.ping():
+    client_es.indices.create(index='books', mappings=mappings_books)
+    SEARCH_ENGINE_ACTIVE = True
+    print("Index 'books' created successfully.")
+else:
+    print("Index 'books' already exists.")
+
+
+if not client_es.indices.exists(index='reviews') and client_es.ping():
+    client_es.indices.create(index='reviews', mappings=mappings_reviews)
+    SEARCH_ENGINE_ACTIVE = True
+    print('Index reviews CREATED')
+else:
+    print('Index reviews already EXISTS')
 
 # Generar varios autores
 def create_authors(num_authors):
@@ -37,15 +75,26 @@ def create_book(author_id):
     name = fake.sentence(nb_words=3)
     date_of_publication = fake.date()
     summary = fake.text()
-
+    id_asociado=str(uuid.uuid4())
     data = {
-        "_id": str(uuid.uuid4()),
+        "_id": id_asociado,
         "name": name,
         "author": author_id,
         "date_of_publication": date_of_publication,
         "summary": summary,
         "type": "book"
     }
+
+    doc = {
+        "name": name,
+        "author": author_id,
+        "date_of_publication": date_of_publication,
+        "summary": summary,
+        "type": "book"
+    }
+    if True:
+        client_es.index(index='books',document=doc, id=id_asociado)
+        
     MY_DATABASE.create_document(data)
     return data
 
@@ -53,16 +102,26 @@ def create_review(book_id):
     review = fake.text()
     score = random.randint(1, 5)
     up_votes = random.randint(-10000, 10000)
-    
+    id_asociado = str(uuid.uuid4())
     data = {
-        "_id": str(uuid.uuid4()),
+        "_id": id_asociado,
         "book": book_id,
         "review": review,
         "score": score,
         "up_votes": up_votes,
         "type": "review"
     }
-    
+
+    doc = {
+        "book": book_id,
+        "review": review,
+        "score": score,
+        "up_votes": up_votes,
+        "type": "review"
+    }
+    if True:
+        client_es.index(index='reviews',document=doc, id=id_asociado)
+        
     MY_DATABASE.create_document(data)
     return data
 

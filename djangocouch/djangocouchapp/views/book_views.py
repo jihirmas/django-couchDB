@@ -1,10 +1,15 @@
 # book_views.py
 from django.conf import settings
+
 from django.shortcuts import render, redirect
 import uuid
 
 my_database = settings.MY_DATABASE
+SEARCH_ENGINE_ACTIVE = settings.SEARCH_ENGINE_ACTIVE
+client_es = settings.CLIENT_ES
 
+if client_es.ping() and client_es.indices.exists(index='books'):
+    SEARCH_ENGINE_ACTIVE = True
 
 def create_book(request):
     if request.method == "POST":
@@ -13,15 +18,27 @@ def create_book(request):
         date_of_publication = request.POST.get('date_of_publication')
         summary = request.POST.get('summary')
 
-        # Create and save a new book
+        id_book = str(uuid.uuid4())
         data = {
-            "_id": str(uuid.uuid4()),
+            "_id": id_book,
             "name": name,
             "author": author_id,
             "date_of_publication": date_of_publication,
             "summary": summary,
             "type": "book"
         }
+        doc = {
+        "name": name,
+        "author": author_id,
+        "date_of_publication": date_of_publication,
+        "summary": summary,
+        "type": "book"
+        }
+        
+        if SEARCH_ENGINE_ACTIVE:
+            print('libro creado en SE')
+            client_es.index(index='books',document=doc, id=id_book)
+
         my_database.create_document(data)
 
         # Redirect to the book management page
@@ -64,7 +81,21 @@ def edit_book(request, book_id):
         book['summary'] = summary
         my_database[book_id] = book  
         book.save()
-        
+        if SEARCH_ENGINE_ACTIVE:
+            client_es.update(
+                index='books',
+                id=book_id,
+                body={
+                    'doc':{
+                        'name': name,
+                        'author': author_id,
+                        'date_of_publication': date_of_publication,
+                        'summary': summary,
+                    }
+                }
+            )
+            
+
         return redirect('book_management')
 
     authors = [
@@ -77,4 +108,15 @@ def edit_book(request, book_id):
 def delete_book(request, book_id):
     book = my_database[book_id]
     book.delete()
-    return redirect('/list_books/')
+    query = {
+    "query": {
+        "match_all": {}
+        }
+    }
+
+    
+    
+    if SEARCH_ENGINE_ACTIVE:
+        client_es.delete(index='books', id=book_id)
+        
+    return redirect('/list-books/')

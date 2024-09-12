@@ -3,6 +3,12 @@ from django.conf import settings
 
 my_database = settings.MY_DATABASE
 
+SEARCH_ENGINE_ACTIVE = settings.SEARCH_ENGINE_ACTIVE
+client_es = settings.CLIENT_ES
+
+if client_es.ping() and client_es.indices.exists(index='books'):
+    SEARCH_ENGINE_ACTIVE = True
+
 def get_top_50_books():
     books = []
     authors_sales = {}
@@ -58,31 +64,56 @@ def top_50_books_view(request):
 def search_view(request):
     search_param = request.POST.get("search_param")
     books = []
-
-    all_docs = my_database.all_docs(include_docs=True)['rows']
-
-    for doc in all_docs:
-        if doc['doc'].get('type') == 'book':
-            book = doc['doc']
-            book_id = book['_id']
-            book_name = book['name']
-            book_summary = book["summary"]
-            author_id = book['author']
-            year = book['date_of_publication'][:4]
-            
-
-            
-            books.append({
-                'id': book_id,
-                'name': book_name,
-                'author_id': author_id,
-                'year': year,
-                'book_summary' : book_summary
-            })
     final_books = []
-    for book in books:
-        if search_param in book['book_summary']:
-            final_books.append(book)
+
+    if not SEARCH_ENGINE_ACTIVE:
+
+        all_docs = my_database.all_docs(include_docs=True)['rows']
+
+        for doc in all_docs:
+            if doc['doc'].get('type') == 'book':
+                book = doc['doc']
+                book_id = book['_id']
+                book_name = book['name']
+                book_summary = book["summary"]
+                author_id = book['author']
+                year = book['date_of_publication'][:4]
+                
+
+                
+                books.append({
+                    'id': book_id,
+                    'name': book_name,
+                    'author_id': author_id,
+                    'year': year,
+                    'book_summary' : book_summary
+                })
+        
+        for book in books:
+            if search_param in book['book_summary']:
+                final_books.append(book)
+    
+    else:
+
+        query = {
+        "query": {
+            "match": {
+                "summary": search_param
+            }
+        }}
+        print('USING THE SEARCH ENGINE @@@@@')
+        
+        response = client_es.search(index="books", body=query)
+        
+        # Mostrar los resultados
+        for hit in response['hits']['hits']:
+            final_books.append({
+                'id': hit['_id'],
+                'name': hit['_source']['name'],
+                'author_id': hit['_source']['author'],
+                'year': hit['_source']['date_of_publication'][:4],
+                'book_summary': hit['_source']['summary'],
+                })
     
     return render(request, 'table/search.html', {'books': final_books})
 
