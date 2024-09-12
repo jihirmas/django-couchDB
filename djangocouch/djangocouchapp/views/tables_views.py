@@ -66,7 +66,9 @@ def top_50_books_view(request):
     top_books = get_top_50_books()
     return render(request, 'table/top_50.html', {'top_books': top_books})
 
+from django.views.decorators.csrf import csrf_exempt
 
+@csrf_exempt
 def search_view(request):
     search_param = request.POST.get("search_param")
     books = []
