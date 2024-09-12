@@ -7,12 +7,14 @@ from django.core.cache import cache
 from django.core.files.storage import FileSystemStorage
 
 my_database = settings.MY_DATABASE
-SEARCH_ENGINE_ACTIVE = settings.SEARCH_ENGINE_ACTIVE
-client_es = settings.CLIENT_ES
 
-
-if client_es.ping() and client_es.indices.exists(index='books'):
-    SEARCH_ENGINE_ACTIVE = True
+try:
+    SEARCH_ENGINE_ACTIVE = settings.SEARCH_ENGINE_ACTIVE
+    client_es = settings.CLIENT_ES
+    if client_es.ping() and client_es.indices.exists(index='books'):
+        SEARCH_ENGINE_ACTIVE = True
+except:
+    SEARCH_ENGINE_ACTIVE = False
 
 def create_book(request):
     if request.method == "POST":
@@ -112,6 +114,8 @@ def edit_book(request, book_id):
         book['summary'] = summary
         my_database[book_id] = book
         book.save()
+        cache.set(f"book_{book_id}", book, timeout=settings.CACHE_TTL)
+        cache.delete('books')
         if SEARCH_ENGINE_ACTIVE:
             client_es.update(
                 index='books',
@@ -126,8 +130,8 @@ def edit_book(request, book_id):
                 }
             )
             
-cache.set(f"book_{book_id}", book, timeout=settings.CACHE_TTL)
-        cache.delete('books')
+
+        
         return redirect('book_management')
     
     authors = cache.get('authors')
@@ -146,11 +150,7 @@ def delete_book(request, book_id):
     book.delete()
     cache.delete(f"book_{book_id}")
     cache.delete('books')
-    query = {
-    "query": {
-        "match_all": {}
-        }
-    }
+    
 
     
     

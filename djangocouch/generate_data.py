@@ -13,45 +13,47 @@ if database_name in client:
 else:
     MY_DATABASE = client.create_database('grupo10')
 
-SEARCH_ENGINE_ACTIVE = False
-client_es = Elasticsearch(
-    ["https://my-elasticsearch:9200"],  
-    http_auth=("elastic", "admin"),                           
-    verify_certs=False,
-)
-mappings_books = {
-    'properties':{
-        'name': {'type': 'text'},
-        'author': {'type': 'text'},
-        'date_of_publication': {'type': 'text'},
-        'summary': {'type': 'text'},
-        'type': {'type': 'text'},
+try:
+    SEARCH_ENGINE_ACTIVE = False
+    client_es = Elasticsearch(
+        ["https://my-elasticsearch:9200"],  
+        http_auth=("elastic", "admin"),                           
+        verify_certs=False,
+    )
+    mappings_books = {
+        'properties':{
+            'name': {'type': 'text'},
+            'author': {'type': 'text'},
+            'date_of_publication': {'type': 'text'},
+            'summary': {'type': 'text'},
+            'type': {'type': 'text'},
+        }
     }
-}
-mappings_reviews = {
-    'properties':{
-        'book': {'type': 'text'},
-        'review': {'type': 'text'},
-        'score': {'type': 'integer'},
-        'up_votes': {'type': 'integer'},
-        'type': {'type': 'text'},
+    mappings_reviews = {
+        'properties':{
+            'book': {'type': 'text'},
+            'review': {'type': 'text'},
+            'score': {'type': 'integer'},
+            'up_votes': {'type': 'integer'},
+            'type': {'type': 'text'},
+        }
     }
-}
-if not client_es.indices.exists(index='books') and client_es.ping():
-    client_es.indices.create(index='books', mappings=mappings_books)
-    SEARCH_ENGINE_ACTIVE = True
-    print("Index 'books' created successfully.")
-else:
-    print("Index 'books' already exists.")
+    if not client_es.indices.exists(index='books') and client_es.ping():
+        client_es.indices.create(index='books', mappings=mappings_books)
+        SEARCH_ENGINE_ACTIVE = True
+        print("Index 'books' created successfully.")
+    else:
+        print("Index 'books' already exists.")
 
 
-if not client_es.indices.exists(index='reviews') and client_es.ping():
-    client_es.indices.create(index='reviews', mappings=mappings_reviews)
-    SEARCH_ENGINE_ACTIVE = True
-    print('Index reviews CREATED')
-else:
-    print('Index reviews already EXISTS')
-
+    if not client_es.indices.exists(index='reviews') and client_es.ping():
+        client_es.indices.create(index='reviews', mappings=mappings_reviews)
+        SEARCH_ENGINE_ACTIVE = True
+        print('Index reviews CREATED')
+    else:
+        print('Index reviews already EXISTS')
+except:
+    SEARCH_ENGINE_ACTIVE = False
 # Generar varios autores
 def create_authors(num_authors):
     authors = []
@@ -92,9 +94,10 @@ def create_book(author_id):
         "summary": summary,
         "type": "book"
     }
-    if True:
+    try:
         client_es.index(index='books',document=doc, id=id_asociado)
-        
+    except:
+        pass
     MY_DATABASE.create_document(data)
     return data
 
@@ -119,9 +122,10 @@ def create_review(book_id):
         "up_votes": up_votes,
         "type": "review"
     }
-    if True:
+    try:
         client_es.index(index='reviews',document=doc, id=id_asociado)
-        
+    except:
+        pass
     MY_DATABASE.create_document(data)
     return data
 
@@ -137,7 +141,7 @@ def create_sales(year_inicial, year_final, book):
         MY_DATABASE.create_document(data)
 
 # Por ejemplo, crear 10 autores
-authors = create_authors(5)
+authors = create_authors(2)
 for i, author in enumerate(authors):
     for n in range(3):
         book = create_book(author_id=author["_id"])

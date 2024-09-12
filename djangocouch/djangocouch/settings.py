@@ -141,46 +141,50 @@ else:
 
 APPEND_SLASH = False
 
-CLIENT_ES = Elasticsearch(
-    ["https://my-elasticsearch:9200"],  
-    http_auth=("elastic", "admin"),                           
-    verify_certs=False,
-)
 
-SEARCH_ENGINE_ACTIVE = False
+try:
+    CLIENT_ES = Elasticsearch(
+        ["https://my-elasticsearch:9200"],  
+        http_auth=("elastic", "admin"),                           
+        verify_certs=False,
+    )
+
+    SEARCH_ENGINE_ACTIVE = False
 
 
 
-mappings_books = {
-    'properties':{
-        'name': {'type': 'text'},
-        'author': {'type': 'text'},
-        'date_of_publication': {'type': 'text'},
-        'summary': {'type': 'text'},
-        'type': {'type': 'text'},
+    mappings_books = {
+        'properties':{
+            'name': {'type': 'text'},
+            'author': {'type': 'text'},
+            'date_of_publication': {'type': 'text'},
+            'summary': {'type': 'text'},
+            'type': {'type': 'text'},
+        }
     }
-}
-mappings_reviews = {
-    'properties':{
-        'book': {'type': 'text'},
-        'review': {'type': 'text'},
-        'score': {'type': 'integer'},
-        'up_votes': {'type': 'integer'},
-        'type': {'type': 'text'},
+    mappings_reviews = {
+        'properties':{
+            'book': {'type': 'text'},
+            'review': {'type': 'text'},
+            'score': {'type': 'integer'},
+            'up_votes': {'type': 'integer'},
+            'type': {'type': 'text'},
+        }
     }
-}
 
-if not CLIENT_ES.indices.exists(index='books') and CLIENT_ES.ping():
-    CLIENT_ES.indices.create(index='books', mappings=mappings_books)
-    SEARCH_ENGINE_ACTIVE = True
-    
-
+    if not CLIENT_ES.indices.exists(index='books') and CLIENT_ES.ping():
+        CLIENT_ES.indices.create(index='books', mappings=mappings_books)
+        SEARCH_ENGINE_ACTIVE = True
+        
 
 
-if not CLIENT_ES.indices.exists(index='reviews') and CLIENT_ES.ping():
-    CLIENT_ES.indices.create(index='reviews', mappings=mappings_reviews)
-    SEARCH_ENGINE_ACTIVE = True
-    
+
+    if not CLIENT_ES.indices.exists(index='reviews') and CLIENT_ES.ping():
+        CLIENT_ES.indices.create(index='reviews', mappings=mappings_reviews)
+        SEARCH_ENGINE_ACTIVE = True
+
+except:
+    SEARCH_ENGINE_ACTIVE = False
 
 
 
